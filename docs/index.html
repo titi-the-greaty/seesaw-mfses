@@ -3,38 +3,1222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEESAW MFSES - Loading...</title>
+    <title>SEESAW MFSES - Financial Freedom</title>
     <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --pink: #DB1478;
+            --blue: #2A84C7;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #e2e8f0;
+            --bg-tertiary: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            margin: 0;
         }
-        .container {
-            text-align: center;
+
+        .header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
         .logo {
-            font-size: 3rem;
+            font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 1rem;
         }
-        .see { color: #DB1478; }
-        .saw { color: #2A84C7; }
-        .message {
-            color: #94a3b8;
+
+        .logo .see {
+            color: var(--pink);
+        }
+
+        .logo .saw {
+            color: var(--blue);
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .updated {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .filter-bar {
+            background: var(--bg-secondary);
+            padding: 0.75rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-bar input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            width: 200px;
+        }
+
+        .filter-bar select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        thead {
+            position: sticky;
+            top: 52px;
+            z-index: 99;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stock-row:hover {
+            background: var(--bg-secondary);
+        }
+
+        .stock-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }
+
+        .logo-cell {
+            width: 40px;
+        }
+
+        .ticker-cell {
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .name-cell {
+            color: var(--text-secondary);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .positive {
+            color: #22c55e;
+        }
+
+        .negative {
+            color: #ef4444;
+        }
+
+        .score-cell {
+            text-align: center;
+            font-weight: 600;
+            color: #000;
+            border-radius: 4px;
+            width: 36px;
+        }
+
+        .state-cell {
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem;
+        }
+
+        .menu-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .details-row td {
+            background: var(--bg-secondary);
+            padding: 1rem;
+        }
+
+        .details-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .mfses-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .score-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-label {
+            width: 80px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .score-value {
+            width: 30px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            font-weight: 600;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .link-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
+        .link-btn:hover {
+            background: var(--border-color);
+        }
+
+        @media (max-width: 1200px) {
+            .details-content {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo"><span class="see">SEE</span><span class="saw">SAW!!</span></div>
-        <p class="message">Waiting for first data update...</p>
-        <p class="message">Trigger the GitHub Action to populate data.</p>
+    <header class="header">
+        <div>
+            <div class="logo"><span class="see">SEE</span><span class="saw">SAW!!</span></div>
+            <div class="tagline">Financial Freedom</div>
+        </div>
+        <div class="header-right">
+            <span class="updated">Updated: 2026-01-28 15:25 UTC</span>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </header>
+
+    <div class="filter-bar">
+        <input type="text" id="search" placeholder="Search ticker..." onkeyup="filterTable()">
+        <select id="sort" onchange="sortTable()">
+            <option value="">Sort by...</option>
+            <option value="ticker">Ticker</option>
+            <option value="price">Price</option>
+            <option value="change_pct">% Change</option>
+            <option value="market_cap">Market Cap</option>
+            <option value="short_score">Short Score</option>
+            <option value="mid_score">Mid Score</option>
+            <option value="long_score">Long Score</option>
+        </select>
+        <select id="state-filter" onchange="filterTable()">
+            <option value="">All States</option>
+            <option value="HOT">HOT</option>
+            <option value="WARM">WARM</option>
+            <option value="COLD">COLD</option>
+            <option value="FROZEN">FROZEN</option>
+        </select>
     </div>
+
+    <div class="table-container">
+        <table id="stocks-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Ticker</th>
+                    <th>Company</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>%</th>
+                    <th>Volume</th>
+                    <th>Mkt Cap</th>
+                    <th title="Moat Score">M</th>
+                    <th title="Growth Score">G</th>
+                    <th title="Balance Score">B</th>
+                    <th title="Valuation Score">V</th>
+                    <th title="Sentiment Score">S</th>
+                    <th>State</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr class="stock-row" data-ticker="META">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>META</strong></td>
+            <td class="name-cell">Meta Platforms Inc.</td>
+            <td class="price-cell">$676.45</td>
+            <td class="change-cell positive">+5.21</td>
+            <td class="pct-cell positive">+0.78%</td>
+            <td class="volume-cell">14.8M</td>
+            <td class="cap-cell">$1.71T</td>
+            <td class="score-cell" style="background-color: #22c55e">19</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #22c55e">18</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('META')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-META" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 84.5%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">16.9</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 85.5%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">17.1</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 87.0%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">17.4</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$852.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value positive">+26.0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$22.13</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+68.5%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.28</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.30%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/META" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=META&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="GOOGL">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>GOOGL</strong></td>
+            <td class="name-cell">Alphabet Inc.</td>
+            <td class="price-cell">$198.41</td>
+            <td class="change-cell positive">+1.87</td>
+            <td class="pct-cell positive">+0.95%</td>
+            <td class="volume-cell">25.6M</td>
+            <td class="cap-cell">$2.42T</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #22c55e">16</td>
+            <td class="score-cell" style="background-color: #22c55e">18</td>
+            <td class="score-cell" style="background-color: #22c55e">16</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('GOOGL')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-GOOGL" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 81.5%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">16.3</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 85.0%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">17.0</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 87.5%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">17.5</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$289.52</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value positive">+45.9%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$7.52</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+32.1%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.11</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.45%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/GOOGL" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=GOOGL&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="NVDA">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>NVDA</strong></td>
+            <td class="name-cell">NVIDIA Corporation</td>
+            <td class="price-cell">$118.42</td>
+            <td class="change-cell negative">-2.87</td>
+            <td class="pct-cell negative">-2.37%</td>
+            <td class="volume-cell">312.0M</td>
+            <td class="cap-cell">$2.89T</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #22c55e">16</td>
+            <td class="score-cell" style="background-color: #eab308">8</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('NVDA')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-NVDA" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 78.5%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.7</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 77.5%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.5</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 80.0%; background: #22c55e"></div>
+                            </div>
+                            <span class="score-value">16.0</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$113.19</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value negative">-4.4%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$2.94</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+152.3%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.41</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.03%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/NVDA" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=NVDA&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="AMD">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>AMD</strong></td>
+            <td class="name-cell">Advanced Micro Devic</td>
+            <td class="price-cell">$119.42</td>
+            <td class="change-cell negative">-1.58</td>
+            <td class="pct-cell negative">-1.31%</td>
+            <td class="volume-cell">42.3M</td>
+            <td class="cap-cell">$193.5B</td>
+            <td class="score-cell" style="background-color: #22c55e">16</td>
+            <td class="score-cell" style="background-color: #22c55e">18</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #eab308">10</td>
+            <td class="score-cell" style="background-color: #84cc16">13</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('AMD')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-AMD" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 75.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.0</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 75.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.0</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 79.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.8</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$126.28</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value positive">+5.7%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$3.28</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+45.7%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.04</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.00%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/AMD" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=AMD&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="AMZN">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>AMZN</strong></td>
+            <td class="name-cell">Amazon.com Inc.</td>
+            <td class="price-cell">$229.15</td>
+            <td class="change-cell positive">+0.95</td>
+            <td class="pct-cell positive">+0.42%</td>
+            <td class="volume-cell">38.2M</td>
+            <td class="cap-cell">$2.42T</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="score-cell" style="background-color: #eab308">8</td>
+            <td class="score-cell" style="background-color: #eab308">11</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('AMZN')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-AMZN" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 74.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.8</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 74.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.8</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 76.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.2</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$200.97</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value negative">-12.3%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$5.22</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+85.4%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.58</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.00%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/AMZN" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=AMZN&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="MSFT">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>MSFT</strong></td>
+            <td class="name-cell">Microsoft Corporatio</td>
+            <td class="price-cell">$442.57</td>
+            <td class="change-cell negative">-1.23</td>
+            <td class="pct-cell negative">-0.28%</td>
+            <td class="volume-cell">21.0M</td>
+            <td class="cap-cell">$3.29T</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="score-cell" style="background-color: #22c55e">16</td>
+            <td class="score-cell" style="background-color: #eab308">10</td>
+            <td class="score-cell" style="background-color: #84cc16">13</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('MSFT')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-MSFT" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 70.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.0</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 73.5%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.7</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 77.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">15.4</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$477.79</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value positive">+8.0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$12.41</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+18.2%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.35</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.72%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/MSFT" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=MSFT&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="CRM">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>CRM</strong></td>
+            <td class="name-cell">Salesforce Inc.</td>
+            <td class="price-cell">$331.24</td>
+            <td class="change-cell positive">+3.87</td>
+            <td class="pct-cell positive">+1.18%</td>
+            <td class="volume-cell">5.2M</td>
+            <td class="cap-cell">$317.8B</td>
+            <td class="score-cell" style="background-color: #22c55e">17</td>
+            <td class="score-cell" style="background-color: #22c55e">18</td>
+            <td class="score-cell" style="background-color: #22c55e">18</td>
+            <td class="score-cell" style="background-color: #f97316">6</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('CRM')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-CRM" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 72.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.4</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 70.5%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.1</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 74.5%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">14.9</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$245.63</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value negative">-25.8%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$6.38</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+42.3%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.20</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.48%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/CRM" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CRM&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="AAPL">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>AAPL</strong></td>
+            <td class="name-cell">Apple Inc.</td>
+            <td class="price-cell">$237.59</td>
+            <td class="change-cell positive">+2.31</td>
+            <td class="pct-cell positive">+0.98%</td>
+            <td class="volume-cell">48.5M</td>
+            <td class="cap-cell">$3.58T</td>
+            <td class="score-cell" style="background-color: #22c55e">20</td>
+            <td class="score-cell" style="background-color: #84cc16">12</td>
+            <td class="score-cell" style="background-color: #eab308">8</td>
+            <td class="score-cell" style="background-color: #eab308">8</td>
+            <td class="score-cell" style="background-color: #84cc16">12</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('AAPL')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-AAPL" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 60.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">12.0</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 62.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">12.4</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 63.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">12.6</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$226.12</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value negative">-4.8%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$6.75</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">+12.5%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">1.87</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.44%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/AAPL" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=AAPL&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="TSLA">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>TSLA</strong></td>
+            <td class="name-cell">Tesla Inc.</td>
+            <td class="price-cell">$398.09</td>
+            <td class="change-cell negative">-8.45</td>
+            <td class="pct-cell negative">-2.08%</td>
+            <td class="volume-cell">89.5M</td>
+            <td class="cap-cell">$1.28T</td>
+            <td class="score-cell" style="background-color: #22c55e">19</td>
+            <td class="score-cell" style="background-color: #f97316">4</td>
+            <td class="score-cell" style="background-color: #22c55e">18</td>
+            <td class="score-cell" style="background-color: #f97316">4</td>
+            <td class="score-cell" style="background-color: #eab308">8</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('TSLA')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-TSLA" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 43.5%; background: #eab308"></div>
+                            </div>
+                            <span class="score-value">8.7</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 52.0%; background: #eab308"></div>
+                            </div>
+                            <span class="score-value">10.4</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 62.0%; background: #84cc16"></div>
+                            </div>
+                            <span class="score-value">12.4</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$26.52</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value negative">-93.3%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$3.12</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">-15.2%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.19</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">0.00%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/TSLA" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TSLA&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="stock-row" data-ticker="INTC">
+            <td class="logo-cell"></td>
+            <td class="ticker-cell"><strong>INTC</strong></td>
+            <td class="name-cell">Intel Corporation</td>
+            <td class="price-cell">$20.87</td>
+            <td class="change-cell positive">+0.32</td>
+            <td class="pct-cell positive">+1.56%</td>
+            <td class="volume-cell">58.7M</td>
+            <td class="cap-cell">$89.2B</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="score-cell" style="background-color: #ef4444">2</td>
+            <td class="score-cell" style="background-color: #84cc16">14</td>
+            <td class="score-cell" style="background-color: #eab308">10</td>
+            <td class="score-cell" style="background-color: #84cc16">13</td>
+            <td class="state-cell" style="color: #3b82f6">COLD</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('INTC')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-INTC" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 46.5%; background: #eab308"></div>
+                            </div>
+                            <span class="score-value">9.3</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 52.0%; background: #eab308"></div>
+                            </div>
+                            <span class="score-value">10.4</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: 56.5%; background: #eab308"></div>
+                            </div>
+                            <span class="score-value">11.3</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">$0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value negative">-100.0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">$-0.85</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">-125.0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">0.51</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">2.39%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/INTC" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=INTC&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const stockData = [{"ticker": "META", "name": "Meta Platforms Inc.", "price": 676.45, "change": 5.21, "change_pct": 0.78, "volume": 14800000, "avg_volume": 13320000, "market_cap": 1710000000000.0, "sector": "Software Publishers", "logo_url": "", "homepage": "", "eps": 22.13, "eps_growth": 68.5, "debt_equity": 0.28, "dividend_yield": 0.3, "annual_dividend": 2.03, "graham_value": 852.0, "upside": 26.0, "moat": 19, "growth": 20, "balance": 18, "valuation": 14, "sentiment": 14, "short_score": 16.9, "mid_score": 17.1, "long_score": 17.4, "state": "COLD"}, {"ticker": "GOOGL", "name": "Alphabet Inc.", "price": 198.41, "change": 1.87, "change_pct": 0.95, "volume": 25600000, "avg_volume": 23040000, "market_cap": 2420000000000.0, "sector": "Software Publishers", "logo_url": "", "homepage": "", "eps": 7.52, "eps_growth": 32.1, "debt_equity": 0.11, "dividend_yield": 0.45, "annual_dividend": 0.89, "graham_value": 289.52, "upside": 45.9, "moat": 20, "growth": 16, "balance": 18, "valuation": 16, "sentiment": 14, "short_score": 16.3, "mid_score": 17.0, "long_score": 17.5, "state": "COLD"}, {"ticker": "NVDA", "name": "NVIDIA Corporation", "price": 118.42, "change": -2.87, "change_pct": -2.37, "volume": 312000000, "avg_volume": 280800000, "market_cap": 2890000000000.0, "sector": "Semiconductor Manufacturing", "logo_url": "", "homepage": "", "eps": 2.94, "eps_growth": 152.3, "debt_equity": 0.41, "dividend_yield": 0.03, "annual_dividend": 0.04, "graham_value": 113.19, "upside": -4.4, "moat": 20, "growth": 20, "balance": 16, "valuation": 8, "sentiment": 14, "short_score": 15.7, "mid_score": 15.5, "long_score": 16.0, "state": "COLD"}, {"ticker": "AMD", "name": "Advanced Micro Devices Inc.", "price": 119.42, "change": -1.58, "change_pct": -1.31, "volume": 42300000, "avg_volume": 38070000, "market_cap": 193500000000.0, "sector": "Semiconductor Manufacturing", "logo_url": "", "homepage": "", "eps": 3.28, "eps_growth": 45.7, "debt_equity": 0.04, "dividend_yield": 0.0, "annual_dividend": 0.0, "graham_value": 126.28, "upside": 5.7, "moat": 16, "growth": 18, "balance": 20, "valuation": 10, "sentiment": 13, "short_score": 15.0, "mid_score": 15.0, "long_score": 15.8, "state": "COLD"}, {"ticker": "AMZN", "name": "Amazon.com Inc.", "price": 229.15, "change": 0.95, "change_pct": 0.42, "volume": 38200000, "avg_volume": 34380000, "market_cap": 2420000000000.0, "sector": "General Warehousing and Storage", "logo_url": "", "homepage": "", "eps": 5.22, "eps_growth": 85.4, "debt_equity": 0.58, "dividend_yield": 0.0, "annual_dividend": 0.0, "graham_value": 200.97, "upside": -12.3, "moat": 20, "growth": 20, "balance": 14, "valuation": 8, "sentiment": 11, "short_score": 14.8, "mid_score": 14.8, "long_score": 15.2, "state": "COLD"}, {"ticker": "MSFT", "name": "Microsoft Corporation", "price": 442.57, "change": -1.23, "change_pct": -0.28, "volume": 21000000, "avg_volume": 18900000, "market_cap": 3290000000000.0, "sector": "Software Publishers", "logo_url": "", "homepage": "", "eps": 12.41, "eps_growth": 18.2, "debt_equity": 0.35, "dividend_yield": 0.72, "annual_dividend": 3.19, "graham_value": 477.79, "upside": 8.0, "moat": 20, "growth": 14, "balance": 16, "valuation": 10, "sentiment": 13, "short_score": 14.0, "mid_score": 14.7, "long_score": 15.4, "state": "COLD"}, {"ticker": "CRM", "name": "Salesforce Inc.", "price": 331.24, "change": 3.87, "change_pct": 1.18, "volume": 5200000, "avg_volume": 4680000, "market_cap": 317800000000.0, "sector": "Software Publishers", "logo_url": "", "homepage": "", "eps": 6.38, "eps_growth": 42.3, "debt_equity": 0.2, "dividend_yield": 0.48, "annual_dividend": 1.59, "graham_value": 245.63, "upside": -25.8, "moat": 17, "growth": 18, "balance": 18, "valuation": 6, "sentiment": 14, "short_score": 14.4, "mid_score": 14.1, "long_score": 14.9, "state": "COLD"}, {"ticker": "AAPL", "name": "Apple Inc.", "price": 237.59, "change": 2.31, "change_pct": 0.98, "volume": 48500000, "avg_volume": 43650000, "market_cap": 3580000000000.0, "sector": "Computer & Communications Equipment", "logo_url": "", "homepage": "", "eps": 6.75, "eps_growth": 12.5, "debt_equity": 1.87, "dividend_yield": 0.44, "annual_dividend": 1.05, "graham_value": 226.12, "upside": -4.8, "moat": 20, "growth": 12, "balance": 8, "valuation": 8, "sentiment": 12, "short_score": 12.0, "mid_score": 12.4, "long_score": 12.6, "state": "COLD"}, {"ticker": "TSLA", "name": "Tesla Inc.", "price": 398.09, "change": -8.45, "change_pct": -2.08, "volume": 89500000, "avg_volume": 80550000, "market_cap": 1280000000000.0, "sector": "Motor Vehicle Manufacturing", "logo_url": "", "homepage": "", "eps": 3.12, "eps_growth": -15.2, "debt_equity": 0.19, "dividend_yield": 0.0, "annual_dividend": 0.0, "graham_value": 26.52, "upside": -93.3, "moat": 19, "growth": 4, "balance": 18, "valuation": 4, "sentiment": 8, "short_score": 8.7, "mid_score": 10.4, "long_score": 12.4, "state": "COLD"}, {"ticker": "INTC", "name": "Intel Corporation", "price": 20.87, "change": 0.32, "change_pct": 1.56, "volume": 58700000, "avg_volume": 52830000, "market_cap": 89200000000.0, "sector": "Semiconductor Manufacturing", "logo_url": "", "homepage": "", "eps": -0.85, "eps_growth": -125.0, "debt_equity": 0.51, "dividend_yield": 2.39, "annual_dividend": 0.5, "graham_value": 0, "upside": -100.0, "moat": 14, "growth": 2, "balance": 14, "valuation": 10, "sentiment": 13, "short_score": 9.3, "mid_score": 10.4, "long_score": 11.3, "state": "COLD"}];
+
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+            localStorage.setItem('theme', body.getAttribute('data-theme'));
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+        }
+
+        function toggleDetails(ticker) {
+            const row = document.getElementById('details-' + ticker);
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+        }
+
+        function filterTable() {
+            const search = document.getElementById('search').value.toUpperCase();
+            const stateFilter = document.getElementById('state-filter').value;
+            const rows = document.querySelectorAll('.stock-row');
+
+            rows.forEach(row => {
+                const ticker = row.getAttribute('data-ticker');
+                const stock = stockData.find(s => s.ticker === ticker);
+                const matchesSearch = ticker.includes(search) || stock.name.toUpperCase().includes(search);
+                const matchesState = !stateFilter || stock.state === stateFilter;
+
+                row.style.display = matchesSearch && matchesState ? '' : 'none';
+                document.getElementById('details-' + ticker).style.display = 'none';
+            });
+        }
+
+        function sortTable() {
+            const sortBy = document.getElementById('sort').value;
+            if (!sortBy) return;
+
+            const tbody = document.querySelector('#stocks-table tbody');
+            const rows = Array.from(tbody.querySelectorAll('.stock-row'));
+
+            rows.sort((a, b) => {
+                const tickerA = a.getAttribute('data-ticker');
+                const tickerB = b.getAttribute('data-ticker');
+                const stockA = stockData.find(s => s.ticker === tickerA);
+                const stockB = stockData.find(s => s.ticker === tickerB);
+
+                if (sortBy === 'ticker') return tickerA.localeCompare(tickerB);
+                return (stockB[sortBy] || 0) - (stockA[sortBy] || 0);
+            });
+
+            rows.forEach(row => {
+                const ticker = row.getAttribute('data-ticker');
+                const detailsRow = document.getElementById('details-' + ticker);
+                tbody.appendChild(row);
+                tbody.appendChild(detailsRow);
+            });
+        }
+    </script>
 </body>
 </html>
