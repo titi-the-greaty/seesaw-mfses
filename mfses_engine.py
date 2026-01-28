@@ -596,6 +596,10 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
 
         change_class = "positive" if stock["change"] >= 0 else "negative"
         change_sign = "+" if stock["change"] >= 0 else ""
+        debt_equity_str = f'{stock["debt_equity"]:.2f}' if stock["debt_equity"] is not None else 'N/A'
+        upside_class = "positive" if stock["upside"] >= 0 else "negative"
+        upside_sign = "+" if stock["upside"] >= 0 else ""
+        eps_growth_sign = "+" if stock["eps_growth"] >= 0 else ""
 
         row = f'''
         <tr class="stock-row" data-ticker="{stock["ticker"]}">
@@ -650,7 +654,7 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
                         </div>
                         <div class="metric">
                             <span class="metric-label">Upside</span>
-                            <span class="metric-value {'positive' if stock["upside"] >= 0 else 'negative'}">{'+' if stock["upside"] >= 0 else ''}{stock["upside"]:.1f}%</span>
+                            <span class="metric-value {upside_class}">{upside_sign}{stock["upside"]:.1f}%</span>
                         </div>
                         <div class="metric">
                             <span class="metric-label">EPS</span>
@@ -658,11 +662,11 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
                         </div>
                         <div class="metric">
                             <span class="metric-label">EPS Growth</span>
-                            <span class="metric-value">{'+' if stock["eps_growth"] >= 0 else ''}{stock["eps_growth"]:.1f}%</span>
+                            <span class="metric-value">{eps_growth_sign}{stock["eps_growth"]:.1f}%</span>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Debt/Equity</span>
-                            <span class="metric-value">{stock["debt_equity"]:.2f if stock["debt_equity"] is not None else 'N/A'}</span>
+                            <span class="metric-value">{debt_equity_str}</span>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Div Yield</span>
