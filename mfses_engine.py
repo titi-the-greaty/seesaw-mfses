@@ -272,6 +272,8 @@ def get_ticker_details(ticker: str) -> Dict:
 
 def get_financials(ticker: str, shares_outstanding: int) -> Dict:
     """Fetch financial data and calculate metrics"""
+    DEBUG_TICKERS = ["META", "AAPL", "INTC"]  # Tickers to debug
+
     data = api_request(f"/vX/reference/financials", {
         "ticker": ticker,
         "limit": 5,
@@ -287,13 +289,25 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
         "total_debt": 0,
         "total_equity": 0,
         "net_income": 0,
-        "revenue": 0
+        "revenue": 0,
+        "debug_info": {}
     }
 
     if not data or not data.get("results"):
+        if ticker in DEBUG_TICKERS:
+            print(f"  DEBUG {ticker}: No financial data returned from API")
         return result
 
     financials = data["results"]
+
+    # Debug: Show all filing periods
+    if ticker in DEBUG_TICKERS:
+        print(f"  DEBUG {ticker}: Found {len(financials)} quarterly filings")
+        for i, f in enumerate(financials):
+            period = f.get("fiscal_period", "?")
+            year = f.get("fiscal_year", "?")
+            filing_date = f.get("filing_date", "?")
+            print(f"    [{i}] {period} {year} (filed: {filing_date})")
 
     # Get most recent quarter data
     if financials:
@@ -313,15 +327,18 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
         # Balance sheet for debt/equity
         balance = latest.get("balance_sheet", {})
 
-        # Use total liabilities for more accurate D/E ratio
-        # (includes operating liabilities, not just financial debt)
-        total_debt = balance.get("liabilities", {}).get("value", 0) or 0
+        # Get individual components for debugging
+        liabilities = balance.get("liabilities", {}).get("value", 0) or 0
+        long_term_debt = balance.get("long_term_debt", {}).get("value", 0) or 0
+        current_debt = balance.get("current_debt", {}).get("value", 0) or 0
+        noncurrent_liabilities = balance.get("noncurrent_liabilities", {}).get("value", 0) or 0
+        current_liabilities = balance.get("current_liabilities", {}).get("value", 0) or 0
+
+        # Use total liabilities for D/E ratio
+        total_debt = liabilities
         if total_debt == 0:
-            # Fallback to financial debt only
-            total_debt = balance.get("long_term_debt", {}).get("value", 0) or 0
-            total_debt += balance.get("current_debt", {}).get("value", 0) or 0
-            total_debt += balance.get("noncurrent_liabilities", {}).get("value", 0) or 0
-            total_debt += balance.get("current_liabilities", {}).get("value", 0) or 0
+            # Fallback to sum of components
+            total_debt = long_term_debt + current_debt + noncurrent_liabilities + current_liabilities
 
         total_equity = balance.get("equity", {}).get("value", 0) or 0
         if total_equity == 0:
@@ -330,6 +347,17 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
         debt_equity = None
         if total_equity > 0:
             debt_equity = total_debt / total_equity
+
+        # Debug balance sheet for AAPL
+        if ticker in DEBUG_TICKERS:
+            print(f"  DEBUG {ticker} Balance Sheet:")
+            print(f"    liabilities (total): ${liabilities/1e9:.2f}B")
+            print(f"    long_term_debt: ${long_term_debt/1e9:.2f}B")
+            print(f"    current_debt: ${current_debt/1e9:.2f}B")
+            print(f"    noncurrent_liabilities: ${noncurrent_liabilities/1e9:.2f}B")
+            print(f"    current_liabilities: ${current_liabilities/1e9:.2f}B")
+            print(f"    equity: ${total_equity/1e9:.2f}B")
+            print(f"    D/E ratio: {debt_equity:.2f}" if debt_equity else "    D/E ratio: N/A")
 
         result.update({
             "eps": eps,
@@ -346,12 +374,34 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
         year_ago_income = year_ago.get("income_statement", {})
         year_ago_net_income = year_ago_income.get("net_income_loss", {}).get("value", 0) or 0
 
+        # Debug EPS growth calculation
+        if ticker in DEBUG_TICKERS:
+            current_period = financials[0].get("fiscal_period", "?")
+            current_year = financials[0].get("fiscal_year", "?")
+            year_ago_period = financials[4].get("fiscal_period", "?")
+            year_ago_year = financials[4].get("fiscal_year", "?")
+            print(f"  DEBUG {ticker} EPS Growth Calculation:")
+            print(f"    Current quarter: {current_period} {current_year}")
+            print(f"    Year-ago quarter: {year_ago_period} {year_ago_year}")
+            print(f"    Current net income: ${net_income/1e9:.2f}B")
+            print(f"    Year-ago net income: ${year_ago_net_income/1e9:.2f}B")
+            print(f"    Shares outstanding: {shares_outstanding/1e9:.2f}B")
+
         if shares_outstanding > 0 and year_ago_net_income != 0:
             year_ago_eps = (year_ago_net_income * 4) / shares_outstanding
             current_eps = result["eps"]
 
             if year_ago_eps != 0:
                 result["eps_growth"] = ((current_eps - year_ago_eps) / abs(year_ago_eps)) * 100
+
+            # More debug output
+            if ticker in DEBUG_TICKERS:
+                print(f"    Current EPS (annualized): ${current_eps:.2f}")
+                print(f"    Year-ago EPS (annualized): ${year_ago_eps:.2f}")
+                print(f"    EPS Growth: {result['eps_growth']:.1f}%")
+        else:
+            if ticker in DEBUG_TICKERS:
+                print(f"    WARNING: Cannot calculate EPS growth (shares={shares_outstanding}, year_ago_income={year_ago_net_income})")
 
     return result
 
