@@ -334,11 +334,14 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
         noncurrent_liabilities = balance.get("noncurrent_liabilities", {}).get("value", 0) or 0
         current_liabilities = balance.get("current_liabilities", {}).get("value", 0) or 0
 
-        # Use total liabilities for D/E ratio
-        total_debt = liabilities
+        # Use FINANCIAL DEBT for D/E ratio (not total liabilities)
+        # Financial debt = long-term debt + current portion of debt
+        total_debt = long_term_debt + current_debt
         if total_debt == 0:
-            # Fallback to sum of components
-            total_debt = long_term_debt + current_debt + noncurrent_liabilities + current_liabilities
+            # Fallback: try to estimate financial debt from noncurrent liabilities
+            # (which often includes long-term debt as a major component)
+            # But cap at 50% of total liabilities to avoid including operating liabilities
+            total_debt = min(noncurrent_liabilities, liabilities * 0.5) if noncurrent_liabilities > 0 else 0
 
         total_equity = balance.get("equity", {}).get("value", 0) or 0
         if total_equity == 0:
@@ -368,21 +371,30 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
             "revenue": revenue
         })
 
-    # Calculate EPS growth (compare to year-ago quarter if available)
-    if len(financials) >= 5:
-        year_ago = financials[4].get("financials", {})
+    # Calculate EPS growth (compare to SAME quarter from year ago)
+    current_period = financials[0].get("fiscal_period", "")
+    current_year = financials[0].get("fiscal_year", 0)
+    target_year = current_year - 1
+
+    # Find the same quarter from last year
+    year_ago_filing = None
+    for f in financials:
+        if f.get("fiscal_period") == current_period and f.get("fiscal_year") == target_year:
+            year_ago_filing = f
+            break
+
+    if ticker in DEBUG_TICKERS:
+        print(f"  DEBUG {ticker} EPS Growth Calculation:")
+        print(f"    Current quarter: {current_period} {current_year}")
+        print(f"    Looking for: {current_period} {target_year}")
+        print(f"    Found year-ago filing: {'Yes' if year_ago_filing else 'No'}")
+
+    if year_ago_filing:
+        year_ago = year_ago_filing.get("financials", {})
         year_ago_income = year_ago.get("income_statement", {})
         year_ago_net_income = year_ago_income.get("net_income_loss", {}).get("value", 0) or 0
 
-        # Debug EPS growth calculation
         if ticker in DEBUG_TICKERS:
-            current_period = financials[0].get("fiscal_period", "?")
-            current_year = financials[0].get("fiscal_year", "?")
-            year_ago_period = financials[4].get("fiscal_period", "?")
-            year_ago_year = financials[4].get("fiscal_year", "?")
-            print(f"  DEBUG {ticker} EPS Growth Calculation:")
-            print(f"    Current quarter: {current_period} {current_year}")
-            print(f"    Year-ago quarter: {year_ago_period} {year_ago_year}")
             print(f"    Current net income: ${net_income/1e9:.2f}B")
             print(f"    Year-ago net income: ${year_ago_net_income/1e9:.2f}B")
             print(f"    Shares outstanding: {shares_outstanding/1e9:.2f}B")
@@ -394,14 +406,17 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
             if year_ago_eps != 0:
                 result["eps_growth"] = ((current_eps - year_ago_eps) / abs(year_ago_eps)) * 100
 
-            # More debug output
             if ticker in DEBUG_TICKERS:
                 print(f"    Current EPS (annualized): ${current_eps:.2f}")
                 print(f"    Year-ago EPS (annualized): ${year_ago_eps:.2f}")
                 print(f"    EPS Growth: {result['eps_growth']:.1f}%")
         else:
             if ticker in DEBUG_TICKERS:
-                print(f"    WARNING: Cannot calculate EPS growth (shares={shares_outstanding}, year_ago_income={year_ago_net_income})")
+                print(f"    WARNING: Cannot calculate (shares={shares_outstanding}, year_ago_income={year_ago_net_income})")
+    else:
+        if ticker in DEBUG_TICKERS:
+            print(f"    WARNING: No matching year-ago quarter found in API data")
+            print(f"    Available filings: {[(f.get('fiscal_period'), f.get('fiscal_year')) for f in financials]}")
 
     return result
 
