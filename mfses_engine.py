@@ -759,6 +759,17 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
         upside_sign = "+" if stock["upside"] >= 0 else ""
         eps_growth_sign = "+" if stock["eps_growth"] >= 0 else ""
 
+        # Extract audit data safely
+        audit = stock.get("audit", {})
+        audit_warnings = audit.get("warnings", [])
+        audit_warnings_html = "".join([f'<div class="audit-warning">&#9888;&#65039; {w}</div>' for w in audit_warnings])
+
+        audit_moat = audit.get("moat", {})
+        audit_growth = audit.get("growth", {})
+        audit_balance = audit.get("balance", {})
+        audit_valuation = audit.get("valuation", {})
+        audit_sentiment = audit.get("sentiment", {})
+
         row = f'''
         <tr class="stock-row" data-ticker="{stock["ticker"]}">
             <td class="logo-cell">{logo_html}</td>
@@ -843,46 +854,46 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
             <td colspan="16">
                 <div class="audit-panel">
                     <h3>&#128269; Fact Check: {stock["ticker"]}</h3>
-                    {"".join([f'<div class="audit-warning">&#9888;&#65039; {w}</div>' for w in stock.get("audit", {{}}).get("warnings", [])])}
+                    {audit_warnings_html}
                     <div class="audit-grid">
                         <div class="audit-card">
                             <div class="audit-header" style="background: {score_color(stock["moat"])}">M = {stock["moat"]}</div>
                             <div class="audit-body">
-                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("moat", {{}}).get("input", "N/A")}</div>
-                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("moat", {{}}).get("bracket", "N/A")}</div>
-                                <div><strong>Formula:</strong> {stock.get("audit", {{}}).get("moat", {{}}).get("formula", "N/A")}</div>
+                                <div><strong>Input:</strong> {audit_moat.get("input", "N/A")}</div>
+                                <div><strong>Bracket:</strong> {audit_moat.get("bracket", "N/A")}</div>
+                                <div><strong>Formula:</strong> {audit_moat.get("formula", "N/A")}</div>
                             </div>
                         </div>
                         <div class="audit-card">
                             <div class="audit-header" style="background: {score_color(stock["growth"])}">G = {stock["growth"]}</div>
                             <div class="audit-body">
-                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("growth", {{}}).get("input", "N/A")}</div>
-                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("growth", {{}}).get("bracket", "N/A")}</div>
-                                <div><strong>Formula:</strong> {stock.get("audit", {{}}).get("growth", {{}}).get("formula", "N/A")}</div>
+                                <div><strong>Input:</strong> {audit_growth.get("input", "N/A")}</div>
+                                <div><strong>Bracket:</strong> {audit_growth.get("bracket", "N/A")}</div>
+                                <div><strong>Formula:</strong> {audit_growth.get("formula", "N/A")}</div>
                             </div>
                         </div>
                         <div class="audit-card">
                             <div class="audit-header" style="background: {score_color(stock["balance"])}">B = {stock["balance"]}</div>
                             <div class="audit-body">
-                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("balance", {{}}).get("input", "N/A")}</div>
+                                <div><strong>Input:</strong> {audit_balance.get("input", "N/A")}</div>
                                 <div><strong>Raw Debt:</strong> ${stock.get("total_debt", 0)/1e9:.2f}B</div>
                                 <div><strong>Raw Equity:</strong> ${stock.get("total_equity", 0)/1e9:.2f}B</div>
-                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("balance", {{}}).get("bracket", "N/A")}</div>
+                                <div><strong>Bracket:</strong> {audit_balance.get("bracket", "N/A")}</div>
                             </div>
                         </div>
                         <div class="audit-card">
                             <div class="audit-header" style="background: {score_color(stock["valuation"])}">V = {stock["valuation"]}</div>
                             <div class="audit-body">
-                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("valuation", {{}}).get("input", "N/A")}</div>
-                                <div><strong>Graham:</strong> ${stock.get("audit", {{}}).get("valuation", {{}}).get("graham_value", 0):.2f}</div>
-                                <div><strong>Upside:</strong> {stock.get("audit", {{}}).get("valuation", {{}}).get("upside_pct", 0):.1f}%</div>
-                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("valuation", {{}}).get("bracket", "N/A")}</div>
+                                <div><strong>Input:</strong> {audit_valuation.get("input", "N/A")}</div>
+                                <div><strong>Graham:</strong> ${audit_valuation.get("graham_value", 0):.2f}</div>
+                                <div><strong>Upside:</strong> {audit_valuation.get("upside_pct", 0):.1f}%</div>
+                                <div><strong>Bracket:</strong> {audit_valuation.get("bracket", "N/A")}</div>
                             </div>
                         </div>
                         <div class="audit-card">
                             <div class="audit-header" style="background: {score_color(stock["sentiment"])}">S = {stock["sentiment"]}</div>
                             <div class="audit-body">
-                                <div><strong>Breakdown:</strong> {stock.get("audit", {{}}).get("sentiment", {{}}).get("breakdown", "N/A")}</div>
+                                <div><strong>Breakdown:</strong> {audit_sentiment.get("breakdown", "N/A")}</div>
                             </div>
                         </div>
                     </div>
