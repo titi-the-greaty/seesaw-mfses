@@ -373,13 +373,14 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
 
     # Calculate EPS growth (compare to SAME quarter from year ago)
     current_period = financials[0].get("fiscal_period", "")
-    current_year = financials[0].get("fiscal_year", 0)
+    current_year = int(financials[0].get("fiscal_year", 0))
     target_year = current_year - 1
 
     # Find the same quarter from last year
     year_ago_filing = None
     for f in financials:
-        if f.get("fiscal_period") == current_period and f.get("fiscal_year") == target_year:
+        f_year = int(f.get("fiscal_year", 0))
+        if f.get("fiscal_period") == current_period and f_year == target_year:
             year_ago_filing = f
             break
 
