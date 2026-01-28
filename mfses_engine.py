@@ -1,0 +1,1081 @@
+#!/usr/bin/env python3
+"""
+SEESAW MFSES v5.0 - Stock Analysis Engine
+Moat, Fundamentals, Sentiment, Expectations, Safety scoring system
+"""
+
+import json
+import os
+import requests
+from datetime import datetime, timezone
+from typing import Dict, List, Optional, Any
+
+# Configuration
+POLYGON_API_KEY = os.environ.get("POLYGON_API_KEY", "oorbpfh9vHYkpK2M4CFjx9f8z3OMfhBD")
+BASE_URL = "https://api.polygon.io"
+
+# The 10 Tech Stocks
+TICKERS = [
+    "AAPL",   # Apple
+    "MSFT",   # Microsoft
+    "GOOGL",  # Alphabet
+    "AMZN",   # Amazon
+    "NVDA",   # Nvidia
+    "META",   # Meta
+    "TSLA",   # Tesla
+    "AMD",    # AMD
+    "INTC",   # Intel
+    "CRM"     # Salesforce
+]
+
+# ============================================================================
+# SCORING FUNCTIONS
+# ============================================================================
+
+def calc_moat(market_cap: float) -> int:
+    """Moat score based on market cap (competitive advantage)"""
+    if market_cap >= 2e12: return 20      # $2T+
+    elif market_cap >= 1e12: return 19    # $1T+
+    elif market_cap >= 500e9: return 18   # $500B+
+    elif market_cap >= 200e9: return 17   # $200B+
+    elif market_cap >= 100e9: return 16   # $100B+
+    elif market_cap >= 50e9: return 14    # $50B+
+    elif market_cap >= 20e9: return 12    # $20B+
+    elif market_cap >= 10e9: return 10    # $10B+
+    elif market_cap >= 5e9: return 8      # $5B+
+    elif market_cap >= 1e9: return 6      # $1B+
+    else: return 4
+
+
+def calc_growth(eps_growth: float) -> int:
+    """Growth score based on EPS growth rate"""
+    g = max(-50, min(100, eps_growth))
+
+    if g >= 50: return 20
+    elif g >= 35: return 18
+    elif g >= 25: return 16
+    elif g >= 15: return 14
+    elif g >= 10: return 12
+    elif g >= 5: return 10
+    elif g >= 0: return 8
+    elif g >= -10: return 6
+    elif g >= -25: return 4
+    else: return 2
+
+
+def calc_balance(debt_equity: Optional[float]) -> int:
+    """Balance score based on debt/equity ratio"""
+    if debt_equity is None or debt_equity < 0:
+        return 10  # Unknown
+
+    if debt_equity < 0.1: return 20
+    elif debt_equity < 0.3: return 18
+    elif debt_equity < 0.5: return 16
+    elif debt_equity < 0.7: return 14
+    elif debt_equity < 1.0: return 12
+    elif debt_equity < 1.5: return 10
+    elif debt_equity < 2.0: return 8
+    elif debt_equity < 3.0: return 6
+    else: return 4
+
+
+def calc_valuation(eps: float, price: float, eps_growth: float) -> int:
+    """Valuation score using Graham formula"""
+    if eps <= 0 or price <= 0:
+        return 10  # Can't calculate
+
+    # Graham formula: V = EPS * (8.5 + 2g)
+    # Cap growth at 15% for conservative Graham value
+    g = min(15, max(0, eps_growth))
+    graham_value = eps * (8.5 + 2 * g)
+
+    # Calculate upside percentage
+    upside = ((graham_value - price) / price) * 100
+
+    if upside >= 100: return 20
+    elif upside >= 60: return 18
+    elif upside >= 40: return 16
+    elif upside >= 20: return 14
+    elif upside >= 10: return 12
+    elif upside >= 0: return 10
+    elif upside >= -20: return 8
+    elif upside >= -40: return 6
+    else: return 4
+
+
+def calc_sentiment(div_yield: float, sector: str, eps_growth: float) -> int:
+    """Sentiment score based on dividends + sector + momentum"""
+    score = 8  # Start at middle
+
+    # Dividend component (+0 to +5)
+    if div_yield >= 4: score += 5
+    elif div_yield >= 3: score += 4
+    elif div_yield >= 2: score += 3
+    elif div_yield >= 1: score += 2
+    elif div_yield > 0: score += 1
+
+    # Tech sector bonus (+2)
+    tech_keywords = ["COMPUTER", "SOFTWARE", "SEMICONDUCTOR", "ELECTRONIC", "TECH"]
+    if any(kw in sector.upper() for kw in tech_keywords):
+        score += 2
+
+    # Growth momentum (+0 to +3)
+    if eps_growth >= 25: score += 3
+    elif eps_growth >= 15: score += 2
+    elif eps_growth >= 5: score += 1
+
+    return min(20, max(1, score))
+
+
+def calc_mfses_scores(moat: int, growth: int, balance: int, valuation: int, sentiment: int) -> tuple:
+    """Calculate Short, Mid, Long term MFSES scores"""
+
+    # Short-term (0-6 months): Growth & Momentum focused
+    short = (
+        growth * 0.30 +      # 30% - Growth matters most short-term
+        sentiment * 0.25 +   # 25% - Market sentiment
+        valuation * 0.20 +   # 20% - Current value
+        moat * 0.15 +        # 15% - Some stability
+        balance * 0.10       # 10% - Less critical short-term
+    )
+
+    # Mid-term (1-3 years): Balanced approach
+    mid = (
+        moat * 0.25 +        # 25% - Quality matters
+        valuation * 0.25 +   # 25% - Value realization
+        growth * 0.20 +      # 20% - Continued growth
+        balance * 0.15 +     # 15% - Financial health
+        sentiment * 0.15     # 15% - Market perception
+    )
+
+    # Long-term (5+ years): Quality & Safety focused
+    long = (
+        moat * 0.30 +        # 30% - Competitive advantage key
+        balance * 0.25 +     # 25% - Financial stability
+        valuation * 0.20 +   # 20% - Entry price matters
+        growth * 0.15 +      # 15% - Sustainable growth
+        sentiment * 0.10     # 10% - Less noise long-term
+    )
+
+    return round(short, 1), round(mid, 1), round(long, 1)
+
+
+def calc_markov_state(volume: float, avg_volume: float, change_pct: float) -> str:
+    """Determine stock activity state"""
+    activity = 0
+
+    # Volume component
+    if avg_volume > 0:
+        vol_ratio = volume / avg_volume
+        if vol_ratio > 2.5: activity += 3
+        elif vol_ratio > 1.5: activity += 2
+        elif vol_ratio > 1.0: activity += 1
+        elif vol_ratio < 0.5: activity -= 1
+
+    # Price movement component
+    abs_change = abs(change_pct)
+    if abs_change > 5: activity += 3
+    elif abs_change > 3: activity += 2
+    elif abs_change > 1.5: activity += 1
+
+    if activity >= 5: return "HOT"
+    elif activity >= 3: return "WARM"
+    elif activity >= 1: return "COLD"
+    else: return "FROZEN"
+
+
+def calc_graham_value(eps: float, eps_growth: float) -> float:
+    """Calculate Graham intrinsic value"""
+    if eps <= 0:
+        return 0
+    g = min(15, max(0, eps_growth))
+    return eps * (8.5 + 2 * g)
+
+
+# ============================================================================
+# API FUNCTIONS
+# ============================================================================
+
+def api_request(endpoint: str, params: Dict = None) -> Optional[Dict]:
+    """Make a request to Polygon API"""
+    if params is None:
+        params = {}
+    params["apiKey"] = POLYGON_API_KEY
+
+    url = f"{BASE_URL}{endpoint}"
+    try:
+        response = requests.get(url, params=params, timeout=30)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        print(f"  API Error for {endpoint}: {e}")
+        return None
+
+
+def get_price_data(ticker: str) -> Dict:
+    """Fetch price data from previous day aggregates"""
+    data = api_request(f"/v2/aggs/ticker/{ticker}/prev")
+
+    if data and data.get("results"):
+        result = data["results"][0]
+        close = result.get("c", 0)
+        open_price = result.get("o", 0)
+        change = close - open_price
+        change_pct = (change / open_price * 100) if open_price else 0
+
+        return {
+            "price": close,
+            "open": open_price,
+            "high": result.get("h", 0),
+            "low": result.get("l", 0),
+            "volume": result.get("v", 0),
+            "change": change,
+            "change_pct": change_pct
+        }
+
+    return {"price": 0, "open": 0, "high": 0, "low": 0, "volume": 0, "change": 0, "change_pct": 0}
+
+
+def get_ticker_details(ticker: str) -> Dict:
+    """Fetch company details"""
+    data = api_request(f"/v3/reference/tickers/{ticker}")
+
+    if data and data.get("results"):
+        result = data["results"]
+        return {
+            "name": result.get("name", ticker),
+            "market_cap": result.get("market_cap", 0) or 0,
+            "sector": result.get("sic_description", "Unknown"),
+            "shares_outstanding": result.get("share_class_shares_outstanding", 0) or result.get("weighted_shares_outstanding", 0) or 0,
+            "logo_url": result.get("branding", {}).get("icon_url", ""),
+            "homepage": result.get("homepage_url", "")
+        }
+
+    return {"name": ticker, "market_cap": 0, "sector": "Unknown", "shares_outstanding": 0, "logo_url": "", "homepage": ""}
+
+
+def get_financials(ticker: str, shares_outstanding: int) -> Dict:
+    """Fetch financial data and calculate metrics"""
+    data = api_request(f"/vX/reference/financials", {
+        "ticker": ticker,
+        "limit": 5,
+        "timeframe": "quarterly",
+        "sort": "filing_date",
+        "order": "desc"
+    })
+
+    result = {
+        "eps": 0,
+        "eps_growth": 0,
+        "debt_equity": None,
+        "total_debt": 0,
+        "total_equity": 0,
+        "net_income": 0,
+        "revenue": 0
+    }
+
+    if not data or not data.get("results"):
+        return result
+
+    financials = data["results"]
+
+    # Get most recent quarter data
+    if financials:
+        latest = financials[0].get("financials", {})
+
+        # Income statement
+        income = latest.get("income_statement", {})
+        net_income = income.get("net_income_loss", {}).get("value", 0) or 0
+        revenue = income.get("revenues", {}).get("value", 0) or 0
+
+        # Calculate EPS
+        eps = 0
+        if shares_outstanding > 0 and net_income != 0:
+            # Annualize quarterly net income (multiply by 4)
+            eps = (net_income * 4) / shares_outstanding
+
+        # Balance sheet for debt/equity
+        balance = latest.get("balance_sheet", {})
+        total_debt = balance.get("long_term_debt", {}).get("value", 0) or 0
+        total_debt += balance.get("current_debt", {}).get("value", 0) or 0
+        if total_debt == 0:
+            total_debt = balance.get("liabilities", {}).get("value", 0) or 0
+
+        total_equity = balance.get("equity", {}).get("value", 0) or 0
+        if total_equity == 0:
+            total_equity = balance.get("stockholders_equity", {}).get("value", 0) or 0
+
+        debt_equity = None
+        if total_equity > 0:
+            debt_equity = total_debt / total_equity
+
+        result.update({
+            "eps": eps,
+            "debt_equity": debt_equity,
+            "total_debt": total_debt,
+            "total_equity": total_equity,
+            "net_income": net_income,
+            "revenue": revenue
+        })
+
+    # Calculate EPS growth (compare to year-ago quarter if available)
+    if len(financials) >= 5:
+        year_ago = financials[4].get("financials", {})
+        year_ago_income = year_ago.get("income_statement", {})
+        year_ago_net_income = year_ago_income.get("net_income_loss", {}).get("value", 0) or 0
+
+        if shares_outstanding > 0 and year_ago_net_income != 0:
+            year_ago_eps = (year_ago_net_income * 4) / shares_outstanding
+            current_eps = result["eps"]
+
+            if year_ago_eps != 0:
+                result["eps_growth"] = ((current_eps - year_ago_eps) / abs(year_ago_eps)) * 100
+
+    return result
+
+
+def get_dividends(ticker: str, price: float) -> Dict:
+    """Fetch dividend data"""
+    data = api_request(f"/v3/reference/dividends", {
+        "ticker": ticker,
+        "limit": 4,
+        "order": "desc"
+    })
+
+    result = {
+        "annual_dividend": 0,
+        "dividend_yield": 0
+    }
+
+    if data and data.get("results"):
+        dividends = data["results"]
+        annual_dividend = sum(d.get("cash_amount", 0) for d in dividends)
+
+        result["annual_dividend"] = annual_dividend
+        if price > 0:
+            result["dividend_yield"] = (annual_dividend / price) * 100
+
+    return result
+
+
+def get_avg_volume(ticker: str) -> float:
+    """Get 30-day average volume"""
+    data = api_request(f"/v2/aggs/ticker/{ticker}/range/1/day/2024-01-01/2025-12-31", {
+        "limit": 30,
+        "sort": "desc"
+    })
+
+    if data and data.get("results"):
+        volumes = [r.get("v", 0) for r in data["results"]]
+        if volumes:
+            return sum(volumes) / len(volumes)
+
+    return 0
+
+
+# ============================================================================
+# MAIN PROCESSING
+# ============================================================================
+
+def validate_stock(stock: Dict) -> bool:
+    """Ensure we have real data, not placeholders"""
+    issues = []
+
+    if stock["market_cap"] == 0:
+        issues.append("Missing market cap")
+    if stock["price"] == 0:
+        issues.append("Missing price")
+
+    if issues:
+        print(f"  WARNING {stock['ticker']}: {', '.join(issues)}")
+        return False
+    return True
+
+
+def process_ticker(ticker: str) -> Optional[Dict]:
+    """Process a single ticker and return all data"""
+    print(f"Processing {ticker}...")
+
+    # Fetch all data
+    price_data = get_price_data(ticker)
+    details = get_ticker_details(ticker)
+    financials = get_financials(ticker, details["shares_outstanding"])
+    dividends = get_dividends(ticker, price_data["price"])
+    avg_volume = get_avg_volume(ticker)
+
+    # Calculate scores
+    moat = calc_moat(details["market_cap"])
+    growth = calc_growth(financials["eps_growth"])
+    balance = calc_balance(financials["debt_equity"])
+    valuation = calc_valuation(financials["eps"], price_data["price"], financials["eps_growth"])
+    sentiment = calc_sentiment(dividends["dividend_yield"], details["sector"], financials["eps_growth"])
+
+    # Calculate MFSES composite scores
+    short_score, mid_score, long_score = calc_mfses_scores(moat, growth, balance, valuation, sentiment)
+
+    # Calculate Markov state
+    state = calc_markov_state(price_data["volume"], avg_volume, price_data["change_pct"])
+
+    # Calculate Graham value
+    graham_value = calc_graham_value(financials["eps"], financials["eps_growth"])
+    upside = ((graham_value - price_data["price"]) / price_data["price"] * 100) if price_data["price"] > 0 else 0
+
+    stock = {
+        "ticker": ticker,
+        "name": details["name"],
+        "price": round(price_data["price"], 2),
+        "change": round(price_data["change"], 2),
+        "change_pct": round(price_data["change_pct"], 2),
+        "volume": int(price_data["volume"]),
+        "avg_volume": int(avg_volume),
+        "market_cap": details["market_cap"],
+        "sector": details["sector"],
+        "logo_url": details["logo_url"],
+        "homepage": details["homepage"],
+
+        # Financials
+        "eps": round(financials["eps"], 2),
+        "eps_growth": round(financials["eps_growth"], 1),
+        "debt_equity": round(financials["debt_equity"], 2) if financials["debt_equity"] is not None else None,
+        "dividend_yield": round(dividends["dividend_yield"], 2),
+        "annual_dividend": round(dividends["annual_dividend"], 2),
+
+        # Graham valuation
+        "graham_value": round(graham_value, 2),
+        "upside": round(upside, 1),
+
+        # Factor scores (0-20)
+        "moat": moat,
+        "growth": growth,
+        "balance": balance,
+        "valuation": valuation,
+        "sentiment": sentiment,
+
+        # MFSES composite scores
+        "short_score": short_score,
+        "mid_score": mid_score,
+        "long_score": long_score,
+
+        # Markov state
+        "state": state
+    }
+
+    # Validate
+    if not validate_stock(stock):
+        print(f"  Data validation failed for {ticker}")
+
+    return stock
+
+
+def generate_html(stocks: List[Dict], timestamp: str) -> str:
+    """Generate the dashboard HTML"""
+
+    def score_color(score: int) -> str:
+        if score >= 16: return "#22c55e"
+        elif score >= 12: return "#84cc16"
+        elif score >= 8: return "#eab308"
+        elif score >= 4: return "#f97316"
+        else: return "#ef4444"
+
+    def format_market_cap(cap: float) -> str:
+        if cap >= 1e12:
+            return f"${cap/1e12:.2f}T"
+        elif cap >= 1e9:
+            return f"${cap/1e9:.1f}B"
+        elif cap >= 1e6:
+            return f"${cap/1e6:.1f}M"
+        return f"${cap:.0f}"
+
+    def format_volume(vol: float) -> str:
+        if vol >= 1e9:
+            return f"{vol/1e9:.1f}B"
+        elif vol >= 1e6:
+            return f"{vol/1e6:.1f}M"
+        elif vol >= 1e3:
+            return f"{vol/1e3:.1f}K"
+        return str(int(vol))
+
+    def state_color(state: str) -> str:
+        colors = {
+            "HOT": "#ef4444",
+            "WARM": "#f97316",
+            "COLD": "#3b82f6",
+            "FROZEN": "#6b7280"
+        }
+        return colors.get(state, "#6b7280")
+
+    # Generate table rows
+    rows = []
+    for stock in stocks:
+        logo_html = f'<img src="{stock["logo_url"]}?apiKey={POLYGON_API_KEY}" alt="{stock["ticker"]}" class="stock-logo" onerror="this.style.display=\'none\'">' if stock["logo_url"] else ''
+
+        change_class = "positive" if stock["change"] >= 0 else "negative"
+        change_sign = "+" if stock["change"] >= 0 else ""
+
+        row = f'''
+        <tr class="stock-row" data-ticker="{stock["ticker"]}">
+            <td class="logo-cell">{logo_html}</td>
+            <td class="ticker-cell"><strong>{stock["ticker"]}</strong></td>
+            <td class="name-cell">{stock["name"][:20]}</td>
+            <td class="price-cell">${stock["price"]:.2f}</td>
+            <td class="change-cell {change_class}">{change_sign}{stock["change"]:.2f}</td>
+            <td class="pct-cell {change_class}">{change_sign}{stock["change_pct"]:.2f}%</td>
+            <td class="volume-cell">{format_volume(stock["volume"])}</td>
+            <td class="cap-cell">{format_market_cap(stock["market_cap"])}</td>
+            <td class="score-cell" style="background-color: {score_color(stock["moat"])}">{stock["moat"]}</td>
+            <td class="score-cell" style="background-color: {score_color(stock["growth"])}">{stock["growth"]}</td>
+            <td class="score-cell" style="background-color: {score_color(stock["balance"])}">{stock["balance"]}</td>
+            <td class="score-cell" style="background-color: {score_color(stock["valuation"])}">{stock["valuation"]}</td>
+            <td class="score-cell" style="background-color: {score_color(stock["sentiment"])}">{stock["sentiment"]}</td>
+            <td class="state-cell" style="color: {state_color(stock["state"])}">{stock["state"]}</td>
+            <td class="menu-cell">
+                <button class="menu-btn" onclick="toggleDetails('{stock["ticker"]}')">&#8942;</button>
+            </td>
+        </tr>
+        <tr class="details-row" id="details-{stock["ticker"]}" style="display: none;">
+            <td colspan="15">
+                <div class="details-content">
+                    <div class="mfses-scores">
+                        <div class="score-bar">
+                            <span class="score-label">Short-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: {stock["short_score"]*5}%; background: {score_color(int(stock["short_score"]))}"></div>
+                            </div>
+                            <span class="score-value">{stock["short_score"]}</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Mid-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: {stock["mid_score"]*5}%; background: {score_color(int(stock["mid_score"]))}"></div>
+                            </div>
+                            <span class="score-value">{stock["mid_score"]}</span>
+                        </div>
+                        <div class="score-bar">
+                            <span class="score-label">Long-term:</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: {stock["long_score"]*5}%; background: {score_color(int(stock["long_score"]))}"></div>
+                            </div>
+                            <span class="score-value">{stock["long_score"]}</span>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Graham Value</span>
+                            <span class="metric-value">${stock["graham_value"]:.2f}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Upside</span>
+                            <span class="metric-value {'positive' if stock["upside"] >= 0 else 'negative'}">{'+' if stock["upside"] >= 0 else ''}{stock["upside"]:.1f}%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS</span>
+                            <span class="metric-value">${stock["eps"]:.2f}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPS Growth</span>
+                            <span class="metric-value">{'+' if stock["eps_growth"] >= 0 else ''}{stock["eps_growth"]:.1f}%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Debt/Equity</span>
+                            <span class="metric-value">{stock["debt_equity"]:.2f if stock["debt_equity"] is not None else 'N/A'}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-value">{stock["dividend_yield"]:.2f}%</span>
+                        </div>
+                    </div>
+                    <div class="links">
+                        <a href="https://finance.yahoo.com/quote/{stock["ticker"]}" target="_blank" class="link-btn">Yahoo Finance</a>
+                        <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={stock["ticker"]}&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>'''
+        rows.append(row)
+
+    table_rows = "\n".join(rows)
+
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEESAW MFSES - Financial Freedom</title>
+    <style>
+        :root {{
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --pink: #DB1478;
+            --blue: #2A84C7;
+        }}
+
+        [data-theme="light"] {{
+            --bg-primary: #f8fafc;
+            --bg-secondary: #e2e8f0;
+            --bg-tertiary: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #94a3b8;
+        }}
+
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }}
+
+        .header {{
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+
+        .logo {{
+            font-size: 2rem;
+            font-weight: bold;
+        }}
+
+        .logo .see {{
+            color: var(--pink);
+        }}
+
+        .logo .saw {{
+            color: var(--blue);
+        }}
+
+        .tagline {{
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }}
+
+        .header-right {{
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }}
+
+        .updated {{
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }}
+
+        .theme-toggle {{
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }}
+
+        .filter-bar {{
+            background: var(--bg-secondary);
+            padding: 0.75rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }}
+
+        .filter-bar input {{
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            width: 200px;
+        }}
+
+        .filter-bar select {{
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }}
+
+        .table-container {{
+            overflow-x: auto;
+            padding: 1rem;
+        }}
+
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }}
+
+        thead {{
+            position: sticky;
+            top: 52px;
+            z-index: 99;
+        }}
+
+        th {{
+            background: var(--bg-tertiary);
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }}
+
+        td {{
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }}
+
+        .stock-row:hover {{
+            background: var(--bg-secondary);
+        }}
+
+        .stock-logo {{
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }}
+
+        .logo-cell {{
+            width: 40px;
+        }}
+
+        .ticker-cell {{
+            font-weight: 600;
+            color: var(--blue);
+        }}
+
+        .name-cell {{
+            color: var(--text-secondary);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }}
+
+        .positive {{
+            color: #22c55e;
+        }}
+
+        .negative {{
+            color: #ef4444;
+        }}
+
+        .score-cell {{
+            text-align: center;
+            font-weight: 600;
+            color: #000;
+            border-radius: 4px;
+            width: 36px;
+        }}
+
+        .state-cell {{
+            font-weight: 600;
+            font-size: 0.75rem;
+        }}
+
+        .menu-btn {{
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem;
+        }}
+
+        .menu-btn:hover {{
+            color: var(--text-primary);
+        }}
+
+        .details-row td {{
+            background: var(--bg-secondary);
+            padding: 1rem;
+        }}
+
+        .details-content {{
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }}
+
+        .mfses-scores {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }}
+
+        .score-bar {{
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }}
+
+        .score-label {{
+            width: 80px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }}
+
+        .bar-container {{
+            flex: 1;
+            height: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            overflow: hidden;
+        }}
+
+        .bar {{
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }}
+
+        .score-value {{
+            width: 30px;
+            text-align: right;
+            font-weight: 600;
+        }}
+
+        .metrics-grid {{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }}
+
+        .metric {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }}
+
+        .metric-label {{
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }}
+
+        .metric-value {{
+            font-weight: 600;
+        }}
+
+        .links {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }}
+
+        .link-btn {{
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.75rem;
+        }}
+
+        .link-btn:hover {{
+            background: var(--border-color);
+        }}
+
+        @media (max-width: 1200px) {{
+            .details-content {{
+                grid-template-columns: 1fr;
+            }}
+
+            .metrics-grid {{
+                grid-template-columns: repeat(2, 1fr);
+            }}
+        }}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div>
+            <div class="logo"><span class="see">SEE</span><span class="saw">SAW!!</span></div>
+            <div class="tagline">Financial Freedom</div>
+        </div>
+        <div class="header-right">
+            <span class="updated">Updated: {timestamp}</span>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </header>
+
+    <div class="filter-bar">
+        <input type="text" id="search" placeholder="Search ticker..." onkeyup="filterTable()">
+        <select id="sort" onchange="sortTable()">
+            <option value="">Sort by...</option>
+            <option value="ticker">Ticker</option>
+            <option value="price">Price</option>
+            <option value="change_pct">% Change</option>
+            <option value="market_cap">Market Cap</option>
+            <option value="short_score">Short Score</option>
+            <option value="mid_score">Mid Score</option>
+            <option value="long_score">Long Score</option>
+        </select>
+        <select id="state-filter" onchange="filterTable()">
+            <option value="">All States</option>
+            <option value="HOT">HOT</option>
+            <option value="WARM">WARM</option>
+            <option value="COLD">COLD</option>
+            <option value="FROZEN">FROZEN</option>
+        </select>
+    </div>
+
+    <div class="table-container">
+        <table id="stocks-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Ticker</th>
+                    <th>Company</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>%</th>
+                    <th>Volume</th>
+                    <th>Mkt Cap</th>
+                    <th title="Moat Score">M</th>
+                    <th title="Growth Score">G</th>
+                    <th title="Balance Score">B</th>
+                    <th title="Valuation Score">V</th>
+                    <th title="Sentiment Score">S</th>
+                    <th>State</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_rows}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const stockData = {json.dumps(stocks)};
+
+        function toggleTheme() {{
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+            localStorage.setItem('theme', body.getAttribute('data-theme'));
+        }}
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {{
+            document.body.setAttribute('data-theme', savedTheme);
+        }}
+
+        function toggleDetails(ticker) {{
+            const row = document.getElementById('details-' + ticker);
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+        }}
+
+        function filterTable() {{
+            const search = document.getElementById('search').value.toUpperCase();
+            const stateFilter = document.getElementById('state-filter').value;
+            const rows = document.querySelectorAll('.stock-row');
+
+            rows.forEach(row => {{
+                const ticker = row.getAttribute('data-ticker');
+                const stock = stockData.find(s => s.ticker === ticker);
+                const matchesSearch = ticker.includes(search) || stock.name.toUpperCase().includes(search);
+                const matchesState = !stateFilter || stock.state === stateFilter;
+
+                row.style.display = matchesSearch && matchesState ? '' : 'none';
+                document.getElementById('details-' + ticker).style.display = 'none';
+            }});
+        }}
+
+        function sortTable() {{
+            const sortBy = document.getElementById('sort').value;
+            if (!sortBy) return;
+
+            const tbody = document.querySelector('#stocks-table tbody');
+            const rows = Array.from(tbody.querySelectorAll('.stock-row'));
+
+            rows.sort((a, b) => {{
+                const tickerA = a.getAttribute('data-ticker');
+                const tickerB = b.getAttribute('data-ticker');
+                const stockA = stockData.find(s => s.ticker === tickerA);
+                const stockB = stockData.find(s => s.ticker === tickerB);
+
+                if (sortBy === 'ticker') return tickerA.localeCompare(tickerB);
+                return (stockB[sortBy] || 0) - (stockA[sortBy] || 0);
+            }});
+
+            rows.forEach(row => {{
+                const ticker = row.getAttribute('data-ticker');
+                const detailsRow = document.getElementById('details-' + ticker);
+                tbody.appendChild(row);
+                tbody.appendChild(detailsRow);
+            }});
+        }}
+    </script>
+</body>
+</html>'''
+
+    return html
+
+
+def main():
+    """Main execution"""
+    print("=" * 60)
+    print("SEESAW MFSES v5.0 - Stock Analysis Engine")
+    print("=" * 60)
+
+    stocks = []
+
+    for ticker in TICKERS:
+        stock = process_ticker(ticker)
+        if stock:
+            stocks.append(stock)
+            print(f"  {ticker}: Price=${stock['price']}, M={stock['moat']}, G={stock['growth']}, B={stock['balance']}, V={stock['valuation']}, S={stock['sentiment']}")
+
+    # Sort by mid-term score (default)
+    stocks.sort(key=lambda x: x["mid_score"], reverse=True)
+
+    # Generate timestamp
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+    # Save data
+    os.makedirs("output", exist_ok=True)
+
+    # Save JSON
+    with open("output/data.json", "w") as f:
+        json.dump({
+            "updated": timestamp,
+            "stocks": stocks
+        }, f, indent=2)
+    print(f"\nSaved data.json")
+
+    # Save HTML
+    html = generate_html(stocks, timestamp)
+    with open("output/index.html", "w") as f:
+        f.write(html)
+    print(f"Saved index.html")
+
+    print("\n" + "=" * 60)
+    print("Processing complete!")
+    print(f"Processed {len(stocks)} stocks")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
