@@ -312,10 +312,16 @@ def get_financials(ticker: str, shares_outstanding: int) -> Dict:
 
         # Balance sheet for debt/equity
         balance = latest.get("balance_sheet", {})
-        total_debt = balance.get("long_term_debt", {}).get("value", 0) or 0
-        total_debt += balance.get("current_debt", {}).get("value", 0) or 0
+
+        # Use total liabilities for more accurate D/E ratio
+        # (includes operating liabilities, not just financial debt)
+        total_debt = balance.get("liabilities", {}).get("value", 0) or 0
         if total_debt == 0:
-            total_debt = balance.get("liabilities", {}).get("value", 0) or 0
+            # Fallback to financial debt only
+            total_debt = balance.get("long_term_debt", {}).get("value", 0) or 0
+            total_debt += balance.get("current_debt", {}).get("value", 0) or 0
+            total_debt += balance.get("noncurrent_liabilities", {}).get("value", 0) or 0
+            total_debt += balance.get("current_liabilities", {}).get("value", 0) or 0
 
         total_equity = balance.get("equity", {}).get("value", 0) or 0
         if total_equity == 0:
