@@ -449,6 +449,16 @@ def create_stock_from_sample(ticker: str) -> Optional[Dict]:
     graham_value = calc_graham_value(eps, eps_growth)
     upside = ((graham_value - price) / price * 100) if price > 0 else 0
 
+    # Simple audit for sample data
+    audit = {
+        "moat": {"input": f"Market Cap: ${market_cap/1e9:.1f}B", "bracket": "Sample", "formula": "Market cap brackets", "score": moat},
+        "growth": {"input": f"EPS Growth: {eps_growth:.1f}%", "bracket": "Sample", "formula": "EPS growth brackets", "score": growth},
+        "balance": {"input": f"D/E Ratio: {debt_equity:.2f}", "raw_debt": 0, "raw_equity": 0, "bracket": "Sample", "formula": "D/E brackets", "score": balance},
+        "valuation": {"input": f"EPS: ${eps:.2f}, Price: ${price:.2f}", "graham_formula": "Sample", "graham_value": round(graham_value, 2), "upside_pct": round(upside, 1), "bracket": "Sample", "score": valuation},
+        "sentiment": {"input": "Sample data", "breakdown": "Sample", "score": sentiment},
+        "warnings": ["Using sample data - API unavailable"]
+    }
+
     return {
         "ticker": ticker,
         "name": sample["name"],
@@ -466,6 +476,8 @@ def create_stock_from_sample(ticker: str) -> Optional[Dict]:
         "debt_equity": round(debt_equity, 2) if debt_equity is not None else None,
         "dividend_yield": round(dividend_yield, 2),
         "annual_dividend": round(dividend_yield * price / 100, 2),
+        "total_debt": 0,
+        "total_equity": 0,
         "graham_value": round(graham_value, 2),
         "upside": round(upside, 1),
         "moat": moat,
@@ -476,7 +488,8 @@ def create_stock_from_sample(ticker: str) -> Optional[Dict]:
         "short_score": short_score,
         "mid_score": mid_score,
         "long_score": long_score,
-        "state": state
+        "state": state,
+        "audit": audit
     }
 
 
@@ -508,6 +521,140 @@ def process_ticker(ticker: str) -> Optional[Dict]:
     graham_value = calc_graham_value(financials["eps"], financials["eps_growth"])
     upside = ((graham_value - price_data["price"]) / price_data["price"] * 100) if price_data["price"] > 0 else 0
 
+    # Build audit/fact-check data
+    warnings = []
+    debt_equity_val = financials["debt_equity"]
+
+    # Validation warnings
+    if debt_equity_val is None or debt_equity_val == 0:
+        warnings.append("D/E ratio is 0 or missing - data may be incomplete")
+    if financials["eps"] == 0 and details["market_cap"] > 50e9:
+        warnings.append("EPS is 0 for large-cap stock - verify data")
+    if details["market_cap"] == 0:
+        warnings.append("Market cap is 0 - data missing")
+    if financials["total_debt"] == 0 and financials["total_equity"] > 0:
+        warnings.append("Total debt is 0 - may only have equity data")
+
+    # Expected market cap ranges for known tickers
+    expected_caps = {
+        "AAPL": (2e12, 4e12), "MSFT": (2e12, 4e12), "GOOGL": (1.5e12, 3e12),
+        "AMZN": (1.5e12, 3e12), "NVDA": (1e12, 5e12), "META": (800e9, 2e12),
+        "TSLA": (500e9, 2e12), "AMD": (100e9, 400e9), "INTC": (50e9, 250e9),
+        "CRM": (200e9, 400e9)
+    }
+    if ticker in expected_caps:
+        low, high = expected_caps[ticker]
+        if details["market_cap"] < low * 0.5 or details["market_cap"] > high * 2:
+            warnings.append(f"Market cap ${details['market_cap']/1e9:.0f}B outside expected range ${low/1e9:.0f}B-${high/1e9:.0f}B")
+
+    # Moat audit
+    def get_moat_bracket(mc):
+        if mc >= 2e12: return "$2T+", 20
+        elif mc >= 1e12: return "$1T+", 19
+        elif mc >= 500e9: return "$500B+", 18
+        elif mc >= 200e9: return "$200B+", 17
+        elif mc >= 100e9: return "$100B+", 16
+        elif mc >= 50e9: return "$50B+", 14
+        elif mc >= 20e9: return "$20B+", 12
+        elif mc >= 10e9: return "$10B+", 10
+        elif mc >= 5e9: return "$5B+", 8
+        elif mc >= 1e9: return "$1B+", 6
+        else: return "<$1B", 4
+
+    moat_bracket, _ = get_moat_bracket(details["market_cap"])
+
+    # Growth audit
+    def get_growth_bracket(g):
+        g = max(-50, min(100, g))
+        if g >= 50: return "≥50%", 20
+        elif g >= 35: return "35-50%", 18
+        elif g >= 25: return "25-35%", 16
+        elif g >= 15: return "15-25%", 14
+        elif g >= 10: return "10-15%", 12
+        elif g >= 5: return "5-10%", 10
+        elif g >= 0: return "0-5%", 8
+        elif g >= -10: return "-10-0%", 6
+        elif g >= -25: return "-25--10%", 4
+        else: return "<-25%", 2
+
+    growth_bracket, _ = get_growth_bracket(financials["eps_growth"])
+
+    # Balance audit
+    def get_balance_bracket(de):
+        if de is None or de < 0: return "Unknown", 10
+        if de < 0.1: return "<0.1", 20
+        elif de < 0.3: return "0.1-0.3", 18
+        elif de < 0.5: return "0.3-0.5", 16
+        elif de < 0.7: return "0.5-0.7", 14
+        elif de < 1.0: return "0.7-1.0", 12
+        elif de < 1.5: return "1.0-1.5", 10
+        elif de < 2.0: return "1.5-2.0", 8
+        elif de < 3.0: return "2.0-3.0", 6
+        else: return "≥3.0", 4
+
+    balance_bracket, _ = get_balance_bracket(debt_equity_val)
+
+    # Valuation audit
+    g_capped = min(15, max(0, financials["eps_growth"]))
+    graham_calc = financials["eps"] * (8.5 + 2 * g_capped) if financials["eps"] > 0 else 0
+
+    def get_valuation_bracket(up):
+        if up >= 100: return "≥100% upside", 20
+        elif up >= 60: return "60-100% upside", 18
+        elif up >= 40: return "40-60% upside", 16
+        elif up >= 20: return "20-40% upside", 14
+        elif up >= 10: return "10-20% upside", 12
+        elif up >= 0: return "0-10% upside", 10
+        elif up >= -20: return "-20-0% upside", 8
+        elif up >= -40: return "-40--20% upside", 6
+        else: return "<-40% upside", 4
+
+    valuation_bracket, _ = get_valuation_bracket(upside)
+
+    # Sentiment audit
+    sent_base = 8
+    sent_div = 5 if dividends["dividend_yield"] >= 4 else (4 if dividends["dividend_yield"] >= 3 else (3 if dividends["dividend_yield"] >= 2 else (2 if dividends["dividend_yield"] >= 1 else (1 if dividends["dividend_yield"] > 0 else 0))))
+    tech_keywords = ["COMPUTER", "SOFTWARE", "SEMICONDUCTOR", "ELECTRONIC", "TECH"]
+    sent_tech = 2 if any(kw in details["sector"].upper() for kw in tech_keywords) else 0
+    sent_growth = 3 if financials["eps_growth"] >= 25 else (2 if financials["eps_growth"] >= 15 else (1 if financials["eps_growth"] >= 5 else 0))
+
+    audit = {
+        "moat": {
+            "input": f"Market Cap: ${details['market_cap']/1e9:.1f}B",
+            "bracket": moat_bracket,
+            "formula": "Market cap size brackets",
+            "score": moat
+        },
+        "growth": {
+            "input": f"EPS Growth: {financials['eps_growth']:.1f}%",
+            "bracket": growth_bracket,
+            "formula": "EPS growth rate brackets",
+            "score": growth
+        },
+        "balance": {
+            "input": f"D/E Ratio: {debt_equity_val:.2f}" if debt_equity_val is not None else "D/E Ratio: N/A",
+            "raw_debt": financials["total_debt"],
+            "raw_equity": financials["total_equity"],
+            "bracket": balance_bracket,
+            "formula": "Debt/Equity ratio brackets",
+            "score": balance
+        },
+        "valuation": {
+            "input": f"EPS: ${financials['eps']:.2f}, Price: ${price_data['price']:.2f}",
+            "graham_formula": f"EPS × (8.5 + 2 × min(15, {financials['eps_growth']:.1f}%))",
+            "graham_value": round(graham_calc, 2),
+            "upside_pct": round(upside, 1),
+            "bracket": valuation_bracket,
+            "score": valuation
+        },
+        "sentiment": {
+            "input": f"Div Yield: {dividends['dividend_yield']:.2f}%, Sector: {details['sector']}, Growth: {financials['eps_growth']:.1f}%",
+            "breakdown": f"Base(8) + Div(+{sent_div}) + Tech(+{sent_tech}) + Growth(+{sent_growth}) = {sent_base + sent_div + sent_tech + sent_growth}",
+            "score": sentiment
+        },
+        "warnings": warnings
+    }
+
     stock = {
         "ticker": ticker,
         "name": details["name"],
@@ -527,6 +674,8 @@ def process_ticker(ticker: str) -> Optional[Dict]:
         "debt_equity": round(financials["debt_equity"], 2) if financials["debt_equity"] is not None else None,
         "dividend_yield": round(dividends["dividend_yield"], 2),
         "annual_dividend": round(dividends["annual_dividend"], 2),
+        "total_debt": financials["total_debt"],
+        "total_equity": financials["total_equity"],
 
         # Graham valuation
         "graham_value": round(graham_value, 2),
@@ -545,7 +694,10 @@ def process_ticker(ticker: str) -> Optional[Dict]:
         "long_score": long_score,
 
         # Markov state
-        "state": state
+        "state": state,
+
+        # Audit data
+        "audit": audit
     }
 
     # Validate - fall back to sample data if API failed
@@ -624,11 +776,12 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
             <td class="score-cell" style="background-color: {score_color(stock["sentiment"])}">{stock["sentiment"]}</td>
             <td class="state-cell" style="color: {state_color(stock["state"])}">{stock["state"]}</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('{stock["ticker"]}')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('{stock["ticker"]}')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-{stock["ticker"]}" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -682,6 +835,56 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
                     <div class="links">
                         <a href="https://finance.yahoo.com/quote/{stock["ticker"]}" target="_blank" class="link-btn">Yahoo Finance</a>
                         <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={stock["ticker"]}&type=10-&dateb=&owner=include&count=40" target="_blank" class="link-btn">SEC Filings</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr class="audit-row" id="audit-{stock["ticker"]}" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: {stock["ticker"]}</h3>
+                    {"".join([f'<div class="audit-warning">&#9888;&#65039; {w}</div>' for w in stock.get("audit", {{}}).get("warnings", [])])}
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: {score_color(stock["moat"])}">M = {stock["moat"]}</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("moat", {{}}).get("input", "N/A")}</div>
+                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("moat", {{}}).get("bracket", "N/A")}</div>
+                                <div><strong>Formula:</strong> {stock.get("audit", {{}}).get("moat", {{}}).get("formula", "N/A")}</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: {score_color(stock["growth"])}">G = {stock["growth"]}</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("growth", {{}}).get("input", "N/A")}</div>
+                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("growth", {{}}).get("bracket", "N/A")}</div>
+                                <div><strong>Formula:</strong> {stock.get("audit", {{}}).get("growth", {{}}).get("formula", "N/A")}</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: {score_color(stock["balance"])}">B = {stock["balance"]}</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("balance", {{}}).get("input", "N/A")}</div>
+                                <div><strong>Raw Debt:</strong> ${stock.get("total_debt", 0)/1e9:.2f}B</div>
+                                <div><strong>Raw Equity:</strong> ${stock.get("total_equity", 0)/1e9:.2f}B</div>
+                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("balance", {{}}).get("bracket", "N/A")}</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: {score_color(stock["valuation"])}">V = {stock["valuation"]}</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> {stock.get("audit", {{}}).get("valuation", {{}}).get("input", "N/A")}</div>
+                                <div><strong>Graham:</strong> ${stock.get("audit", {{}}).get("valuation", {{}}).get("graham_value", 0):.2f}</div>
+                                <div><strong>Upside:</strong> {stock.get("audit", {{}}).get("valuation", {{}}).get("upside_pct", 0):.1f}%</div>
+                                <div><strong>Bracket:</strong> {stock.get("audit", {{}}).get("valuation", {{}}).get("bracket", "N/A")}</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: {score_color(stock["sentiment"])}">S = {stock["sentiment"]}</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> {stock.get("audit", {{}}).get("sentiment", {{}}).get("breakdown", "N/A")}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </td>
@@ -899,6 +1102,94 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
             color: var(--text-primary);
         }}
 
+        .audit-btn {{
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            margin-right: 0.25rem;
+        }}
+
+        .audit-btn:hover {{
+            color: #3b82f6;
+        }}
+
+        .audit-row td {{
+            background: var(--bg-tertiary);
+            padding: 1rem;
+        }}
+
+        .audit-panel {{
+            padding: 1rem;
+        }}
+
+        .audit-panel h3 {{
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }}
+
+        .audit-warning {{
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }}
+
+        [data-theme="dark"] .audit-warning {{
+            background: #78350f;
+            color: #fef3c7;
+        }}
+
+        .audit-grid {{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }}
+
+        .audit-card {{
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }}
+
+        .audit-header {{
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #000;
+        }}
+
+        .audit-body {{
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }}
+
+        .audit-body div {{
+            margin-bottom: 0.25rem;
+        }}
+
+        .audit-body strong {{
+            color: var(--text-primary);
+        }}
+
+        @media (max-width: 1400px) {{
+            .audit-grid {{
+                grid-template-columns: repeat(3, 1fr);
+            }}
+        }}
+
+        @media (max-width: 900px) {{
+            .audit-grid {{
+                grid-template-columns: repeat(2, 1fr);
+            }}
+        }}
+
         .details-row td {{
             background: var(--bg-secondary);
             padding: 1rem;
@@ -1080,6 +1371,15 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
         function toggleDetails(ticker) {{
             const row = document.getElementById('details-' + ticker);
             row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            // Hide audit when showing details
+            document.getElementById('audit-' + ticker).style.display = 'none';
+        }}
+
+        function toggleAudit(ticker) {{
+            const row = document.getElementById('audit-' + ticker);
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            // Hide details when showing audit
+            document.getElementById('details-' + ticker).style.display = 'none';
         }}
 
         function filterTable() {{
@@ -1095,6 +1395,7 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
 
                 row.style.display = matchesSearch && matchesState ? '' : 'none';
                 document.getElementById('details-' + ticker).style.display = 'none';
+                document.getElementById('audit-' + ticker).style.display = 'none';
             }});
         }}
 
@@ -1118,8 +1419,10 @@ def generate_html(stocks: List[Dict], timestamp: str) -> str:
             rows.forEach(row => {{
                 const ticker = row.getAttribute('data-ticker');
                 const detailsRow = document.getElementById('details-' + ticker);
+                const auditRow = document.getElementById('audit-' + ticker);
                 tbody.appendChild(row);
                 tbody.appendChild(detailsRow);
+                tbody.appendChild(auditRow);
             }});
         }}
     </script>
