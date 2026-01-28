@@ -207,6 +207,94 @@
             color: var(--text-primary);
         }
 
+        .audit-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            margin-right: 0.25rem;
+        }
+
+        .audit-btn:hover {
+            color: #3b82f6;
+        }
+
+        .audit-row td {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+        }
+
+        .audit-panel {
+            padding: 1rem;
+        }
+
+        .audit-panel h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .audit-warning {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        [data-theme="dark"] .audit-warning {
+            background: #78350f;
+            color: #fef3c7;
+        }
+
+        .audit-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .audit-card {
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .audit-header {
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .audit-body {
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .audit-body div {
+            margin-bottom: 0.25rem;
+        }
+
+        .audit-body strong {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 1400px) {
+            .audit-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .audit-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .details-row td {
             background: var(--bg-secondary);
             padding: 1rem;
@@ -316,7 +404,7 @@
             <div class="tagline">Financial Freedom</div>
         </div>
         <div class="header-right">
-            <span class="updated">Updated: 2026-01-28 15:37 UTC</span>
+            <span class="updated">Updated: 2026-01-28 15:50 UTC</span>
             <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
         </div>
     </header>
@@ -381,11 +469,12 @@
             <td class="score-cell" style="background-color: #84cc16">14</td>
             <td class="state-cell" style="color: #6b7280">FROZEN</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('GOOGL')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('GOOGL')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-GOOGL" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -443,6 +532,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-GOOGL" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: GOOGL</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $4037.0B</div>
+                                <div><strong>Bracket:</strong> $2T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 18</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 48.1%</div>
+                                <div><strong>Bracket:</strong> 35-50%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">B = 16</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.39</div>
+                                <div><strong>Raw Debt:</strong> $149.60B</div>
+                                <div><strong>Raw Equity:</strong> $386.87B</div>
+                                <div><strong>Bracket:</strong> 0.3-0.5</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">V = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $24.05, Price: $334.55</div>
+                                <div><strong>Graham:</strong> $925.88</div>
+                                <div><strong>Upside:</strong> 176.8%</div>
+                                <div><strong>Bracket:</strong> ≥100% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">S = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="INTC">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/aW50ZWwuY29t/images/2025-04-04_icon.png?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="INTC" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -460,11 +599,12 @@
             <td class="score-cell" style="background-color: #84cc16">15</td>
             <td class="state-cell" style="color: #3b82f6">COLD</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('INTC')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('INTC')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-INTC" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -522,6 +662,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-INTC" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: INTC</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 17</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $219.4B</div>
+                                <div><strong>Bracket:</strong> $200B+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 358.2%</div>
+                                <div><strong>Bracket:</strong> ≥50%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">B = 12</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.75</div>
+                                <div><strong>Raw Debt:</strong> $87.78B</div>
+                                <div><strong>Raw Equity:</strong> $116.73B</div>
+                                <div><strong>Bracket:</strong> 0.7-1.0</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">V = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $3.58, Price: $43.93</div>
+                                <div><strong>Graham:</strong> $137.66</div>
+                                <div><strong>Upside:</strong> 213.4%</div>
+                                <div><strong>Bracket:</strong> ≥100% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">S = 15</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+2) + Tech(+2) + Growth(+3) = 15</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="AMZN">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/YW1hem9uLmNvbQ/images/2025-04-04_icon.jpeg?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="AMZN" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -539,11 +729,12 @@
             <td class="score-cell" style="background-color: #eab308">11</td>
             <td class="state-cell" style="color: #3b82f6">COLD</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('AMZN')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('AMZN')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-AMZN" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -601,6 +792,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-AMZN" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: AMZN</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $2615.7B</div>
+                                <div><strong>Bracket:</strong> $2T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 57.1%</div>
+                                <div><strong>Bracket:</strong> ≥50%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">B = 12</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.97</div>
+                                <div><strong>Raw Debt:</strong> $358.29B</div>
+                                <div><strong>Raw Equity:</strong> $369.63B</div>
+                                <div><strong>Bracket:</strong> 0.7-1.0</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">V = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $7.93, Price: $244.68</div>
+                                <div><strong>Graham:</strong> $305.21</div>
+                                <div><strong>Upside:</strong> 24.7%</div>
+                                <div><strong>Bracket:</strong> 20-40% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #eab308">S = 11</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+0) + Tech(+0) + Growth(+3) = 11</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="NVDA">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/bnZpZGlhLmNvbQ/images/2025-04-04_icon.png?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="NVDA" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -618,11 +859,12 @@
             <td class="score-cell" style="background-color: #84cc16">14</td>
             <td class="state-cell" style="color: #6b7280">FROZEN</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('NVDA')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('NVDA')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-NVDA" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -680,6 +922,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-NVDA" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: NVDA</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $4582.0B</div>
+                                <div><strong>Bracket:</strong> $2T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 114.4%</div>
+                                <div><strong>Bracket:</strong> ≥50%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">B = 16</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.36</div>
+                                <div><strong>Raw Debt:</strong> $42.25B</div>
+                                <div><strong>Raw Equity:</strong> $118.90B</div>
+                                <div><strong>Bracket:</strong> 0.3-0.5</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #eab308">V = 10</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $5.25, Price: $188.52</div>
+                                <div><strong>Graham:</strong> $202.23</div>
+                                <div><strong>Upside:</strong> 7.3%</div>
+                                <div><strong>Bracket:</strong> 0-10% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">S = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="CRM">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/c2FsZXNmb3JjZS5jb20/images/2025-04-04_icon.jpeg?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="CRM" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -697,11 +989,12 @@
             <td class="score-cell" style="background-color: #84cc16">14</td>
             <td class="state-cell" style="color: #3b82f6">COLD</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('CRM')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('CRM')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-CRM" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -759,6 +1052,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-CRM" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: CRM</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 17</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $214.1B</div>
+                                <div><strong>Bracket:</strong> $200B+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 54.2%</div>
+                                <div><strong>Bracket:</strong> ≥50%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">B = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.59</div>
+                                <div><strong>Raw Debt:</strong> $36.24B</div>
+                                <div><strong>Raw Equity:</strong> $61.33B</div>
+                                <div><strong>Bracket:</strong> 0.5-0.7</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">V = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $8.06, Price: $228.53</div>
+                                <div><strong>Graham:</strong> $310.14</div>
+                                <div><strong>Upside:</strong> 35.7%</div>
+                                <div><strong>Bracket:</strong> 20-40% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">S = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="MSFT">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/bWljcm9zb2Z0LmNvbQ/images/2025-04-04_icon.jpeg?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="MSFT" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -776,11 +1119,12 @@
             <td class="score-cell" style="background-color: #84cc16">14</td>
             <td class="state-cell" style="color: #3b82f6">COLD</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('MSFT')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('MSFT')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-MSFT" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -838,6 +1182,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-MSFT" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: MSFT</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $3571.9B</div>
+                                <div><strong>Bracket:</strong> $2T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 16</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 26.9%</div>
+                                <div><strong>Bracket:</strong> 25-35%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">B = 12</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.75</div>
+                                <div><strong>Raw Debt:</strong> $273.27B</div>
+                                <div><strong>Raw Equity:</strong> $363.08B</div>
+                                <div><strong>Bracket:</strong> 0.7-1.0</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">V = 12</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $14.93, Price: $480.58</div>
+                                <div><strong>Graham:</strong> $574.92</div>
+                                <div><strong>Upside:</strong> 19.6%</div>
+                                <div><strong>Bracket:</strong> 10-20% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">S = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="AMD">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/YW1kLmNvbQ/images/2025-04-04_icon.jpeg?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="AMD" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -855,11 +1249,12 @@
             <td class="score-cell" style="background-color: #84cc16">13</td>
             <td class="state-cell" style="color: #6b7280">FROZEN</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('AMD')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('AMD')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-AMD" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -917,6 +1312,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-AMD" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: AMD</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 17</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $410.3B</div>
+                                <div><strong>Bracket:</strong> $200B+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">G = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: 369.1%</div>
+                                <div><strong>Bracket:</strong> ≥50%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">B = 18</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.26</div>
+                                <div><strong>Raw Debt:</strong> $16.10B</div>
+                                <div><strong>Raw Equity:</strong> $60.79B</div>
+                                <div><strong>Bracket:</strong> 0.1-0.3</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">V = 4</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $3.05, Price: $252.03</div>
+                                <div><strong>Graham:</strong> $117.58</div>
+                                <div><strong>Upside:</strong> -53.3%</div>
+                                <div><strong>Bracket:</strong> <-40% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">S = 13</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+0) + Tech(+2) + Growth(+3) = 13</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="TSLA">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/dGVzbGEuY29t/images/2025-04-04_icon.png?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="TSLA" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -934,11 +1379,12 @@
             <td class="score-cell" style="background-color: #eab308">8</td>
             <td class="state-cell" style="color: #6b7280">FROZEN</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('TSLA')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('TSLA')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-TSLA" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -996,6 +1442,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-TSLA" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: TSLA</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 19</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $1433.1B</div>
+                                <div><strong>Bracket:</strong> $1T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">G = 6</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: -7.0%</div>
+                                <div><strong>Bracket:</strong> -10-0%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">B = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.66</div>
+                                <div><strong>Raw Debt:</strong> $53.02B</div>
+                                <div><strong>Raw Equity:</strong> $80.66B</div>
+                                <div><strong>Bracket:</strong> 0.5-0.7</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">V = 4</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $1.67, Price: $430.90</div>
+                                <div><strong>Graham:</strong> $14.20</div>
+                                <div><strong>Upside:</strong> -96.7%</div>
+                                <div><strong>Bracket:</strong> <-40% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #eab308">S = 8</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+0) + Tech(+0) + Growth(+0) = 8</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="META">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/YWJvdXQubWV0YS5jb20/images/2025-04-04_icon.png?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="META" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -1013,11 +1509,12 @@
             <td class="score-cell" style="background-color: #eab308">11</td>
             <td class="state-cell" style="color: #6b7280">FROZEN</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('META')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('META')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-META" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -1075,6 +1572,56 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-META" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: META</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 19</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $1696.2B</div>
+                                <div><strong>Bracket:</strong> $1T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #ef4444">G = 2</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: -79.9%</div>
+                                <div><strong>Bracket:</strong> <-25%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #84cc16">B = 14</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 0.57</div>
+                                <div><strong>Raw Debt:</strong> $109.78B</div>
+                                <div><strong>Raw Equity:</strong> $194.07B</div>
+                                <div><strong>Bracket:</strong> 0.5-0.7</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">V = 4</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $4.98, Price: $672.97</div>
+                                <div><strong>Graham:</strong> $42.29</div>
+                                <div><strong>Upside:</strong> -93.7%</div>
+                                <div><strong>Bracket:</strong> <-40% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #eab308">S = 11</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+1) + Tech(+2) + Growth(+0) = 11</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
         <tr class="stock-row" data-ticker="AAPL">
             <td class="logo-cell"><img src="https://api.polygon.io/v1/reference/company-branding/YXBwbGUuY29t/images/2025-04-04_icon.png?apiKey=FzNPP96rxiDhDz3xTQYB31Ucrek54q7x" alt="AAPL" class="stock-logo" onerror="this.style.display='none'"></td>
@@ -1092,11 +1639,12 @@
             <td class="score-cell" style="background-color: #eab308">11</td>
             <td class="state-cell" style="color: #3b82f6">COLD</td>
             <td class="menu-cell">
+                <button class="audit-btn" onclick="toggleAudit('AAPL')" title="Fact Check">&#128269;</button>
                 <button class="menu-btn" onclick="toggleDetails('AAPL')">&#8942;</button>
             </td>
         </tr>
         <tr class="details-row" id="details-AAPL" style="display: none;">
-            <td colspan="15">
+            <td colspan="16">
                 <div class="details-content">
                     <div class="mfses-scores">
                         <div class="score-bar">
@@ -1154,12 +1702,62 @@
                 </div>
             </td>
         </tr>
+        <tr class="audit-row" id="audit-AAPL" style="display: none;">
+            <td colspan="16">
+                <div class="audit-panel">
+                    <h3>&#128269; Fact Check: AAPL</h3>
+                    
+                    <div class="audit-grid">
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #22c55e">M = 20</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> Market Cap: $3796.0B</div>
+                                <div><strong>Bracket:</strong> $2T+</div>
+                                <div><strong>Formula:</strong> Market cap size brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">G = 6</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS Growth: -0.9%</div>
+                                <div><strong>Bracket:</strong> -10-0%</div>
+                                <div><strong>Formula:</strong> EPS growth rate brackets</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">B = 4</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> D/E Ratio: 4.04</div>
+                                <div><strong>Raw Debt:</strong> $265.67B</div>
+                                <div><strong>Raw Equity:</strong> $65.83B</div>
+                                <div><strong>Bracket:</strong> ≥3.0</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #f97316">V = 4</div>
+                            <div class="audit-body">
+                                <div><strong>Input:</strong> EPS: $6.38, Price: $258.27</div>
+                                <div><strong>Graham:</strong> $54.21</div>
+                                <div><strong>Upside:</strong> -79.0%</div>
+                                <div><strong>Bracket:</strong> <-40% upside</div>
+                            </div>
+                        </div>
+                        <div class="audit-card">
+                            <div class="audit-header" style="background: #eab308">S = 11</div>
+                            <div class="audit-body">
+                                <div><strong>Breakdown:</strong> Base(8) + Div(+1) + Tech(+2) + Growth(+0) = 11</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
             </tbody>
         </table>
     </div>
 
     <script>
-        const stockData = [{"ticker": "GOOGL", "name": "Alphabet Inc. Class A Common Stock", "price": 334.55, "change": -0.81, "change_pct": -0.24, "volume": 21635652, "avg_volume": 39422714, "market_cap": 4037014850000.0, "sector": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YWJjLnh5eg/images/2025-04-04_icon.png", "homepage": "https://www.abc.xyz", "eps": 24.05, "eps_growth": 48.1, "debt_equity": 0.39, "dividend_yield": 0.25, "annual_dividend": 0.83, "graham_value": 925.88, "upside": 176.8, "moat": 20, "growth": 18, "balance": 16, "valuation": 20, "sentiment": 14, "short_score": 17.5, "mid_score": 18.1, "long_score": 18.1, "state": "FROZEN"}, {"ticker": "INTC", "name": "Intel Corp", "price": 43.93, "change": -0.04, "change_pct": -0.09, "volume": 121829763, "avg_volume": 75762123, "market_cap": 219438192207.88, "sector": "SEMICONDUCTORS & RELATED DEVICES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/aW50ZWwuY29t/images/2025-04-04_icon.png", "homepage": "https://www.intel.com", "eps": 3.58, "eps_growth": 358.2, "debt_equity": 0.75, "dividend_yield": 1.14, "annual_dividend": 0.5, "graham_value": 137.66, "upside": 213.4, "moat": 17, "growth": 20, "balance": 12, "valuation": 20, "sentiment": 15, "short_score": 17.5, "mid_score": 17.3, "long_score": 16.6, "state": "COLD"}, {"ticker": "AMZN", "name": "Amazon.Com Inc", "price": 244.68, "change": 5.0, "change_pct": 2.08, "volume": 38220828, "avg_volume": 39263808, "market_cap": 2615682053571.48, "sector": "RETAIL-CATALOG & MAIL-ORDER HOUSES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YW1hem9uLmNvbQ/images/2025-04-04_icon.jpeg", "homepage": "https://www.amazon.com", "eps": 7.93, "eps_growth": 57.1, "debt_equity": 0.97, "dividend_yield": 0, "annual_dividend": 0, "graham_value": 305.21, "upside": 24.7, "moat": 20, "growth": 20, "balance": 12, "valuation": 14, "sentiment": 11, "short_score": 15.8, "mid_score": 16.0, "long_score": 15.9, "state": "COLD"}, {"ticker": "NVDA", "name": "Nvidia Corp", "price": 188.52, "change": 1.28, "change_pct": 0.68, "volume": 143702917, "avg_volume": 188534148, "market_cap": 4581978600000.0, "sector": "SEMICONDUCTORS & RELATED DEVICES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/bnZpZGlhLmNvbQ/images/2025-04-04_icon.png", "homepage": "https://www.nvidia.com", "eps": 5.25, "eps_growth": 114.4, "debt_equity": 0.36, "dividend_yield": 0.02, "annual_dividend": 0.04, "graham_value": 202.23, "upside": 7.3, "moat": 20, "growth": 20, "balance": 16, "valuation": 10, "sentiment": 14, "short_score": 16.1, "mid_score": 16.0, "long_score": 16.4, "state": "FROZEN"}, {"ticker": "CRM", "name": "Salesforce, Inc.", "price": 228.53, "change": -3.41, "change_pct": -1.47, "volume": 9838264, "avg_volume": 8135600, "market_cap": 214132610000.0, "sector": "SERVICES-PREPACKAGED SOFTWARE", "logo_url": "https://api.polygon.io/v1/reference/company-branding/c2FsZXNmb3JjZS5jb20/images/2025-04-04_icon.jpeg", "homepage": "https://www.salesforce.com", "eps": 8.06, "eps_growth": 54.2, "debt_equity": 0.59, "dividend_yield": 0.73, "annual_dividend": 1.66, "graham_value": 310.14, "upside": 35.7, "moat": 17, "growth": 20, "balance": 14, "valuation": 14, "sentiment": 14, "short_score": 16.2, "mid_score": 15.9, "long_score": 15.8, "state": "COLD"}, {"ticker": "MSFT", "name": "Microsoft Corp", "price": 480.58, "change": 6.88, "change_pct": 1.45, "volume": 29209069, "avg_volume": 23825084, "market_cap": 3571852053439.9, "sector": "SERVICES-PREPACKAGED SOFTWARE", "logo_url": "https://api.polygon.io/v1/reference/company-branding/bWljcm9zb2Z0LmNvbQ/images/2025-04-04_icon.jpeg", "homepage": "https://www.microsoft.com", "eps": 14.93, "eps_growth": 26.9, "debt_equity": 0.75, "dividend_yield": 0.72, "annual_dividend": 3.48, "graham_value": 574.92, "upside": 19.6, "moat": 20, "growth": 16, "balance": 12, "valuation": 12, "sentiment": 14, "short_score": 14.9, "mid_score": 15.1, "long_score": 15.2, "state": "COLD"}, {"ticker": "AMD", "name": "Advanced Micro Devices", "price": 252.03, "change": -0.13, "change_pct": -0.05, "volume": 25693298, "avg_volume": 33662481, "market_cap": 410315309326.2, "sector": "SEMICONDUCTORS & RELATED DEVICES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YW1kLmNvbQ/images/2025-04-04_icon.jpeg", "homepage": "https://www.amd.com", "eps": 3.05, "eps_growth": 369.1, "debt_equity": 0.26, "dividend_yield": 0, "annual_dividend": 0, "graham_value": 117.58, "upside": -53.3, "moat": 17, "growth": 20, "balance": 18, "valuation": 4, "sentiment": 13, "short_score": 14.4, "mid_score": 13.9, "long_score": 14.7, "state": "FROZEN"}, {"ticker": "TSLA", "name": "Tesla, Inc. Common Stock", "price": 430.9, "change": -6.51, "change_pct": -1.49, "volume": 37732219, "avg_volume": 75626708, "market_cap": 1433095479060.2998, "sector": "MOTOR VEHICLES & PASSENGER CAR BODIES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/dGVzbGEuY29t/images/2025-04-04_icon.png", "homepage": "https://www.tesla.com", "eps": 1.67, "eps_growth": -7.0, "debt_equity": 0.66, "dividend_yield": 0, "annual_dividend": 0, "graham_value": 14.2, "upside": -96.7, "moat": 19, "growth": 6, "balance": 14, "valuation": 4, "sentiment": 8, "short_score": 8.8, "mid_score": 10.2, "long_score": 11.7, "state": "FROZEN"}, {"ticker": "META", "name": "Meta Platforms, Inc. Class A Common Stock", "price": 672.97, "change": -1.62, "change_pct": -0.24, "volume": 13294016, "avg_volume": 16747279, "market_cap": 1696239456953.09, "sector": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YWJvdXQubWV0YS5jb20/images/2025-04-04_icon.png", "homepage": "https://about.meta.com", "eps": 4.98, "eps_growth": -79.9, "debt_equity": 0.57, "dividend_yield": 0.31, "annual_dividend": 2.1, "graham_value": 42.29, "upside": -93.7, "moat": 19, "growth": 2, "balance": 14, "valuation": 4, "sentiment": 11, "short_score": 8.4, "mid_score": 9.9, "long_score": 11.4, "state": "FROZEN"}, {"ticker": "AAPL", "name": "Apple Inc.", "price": 258.27, "change": -0.9, "change_pct": -0.35, "volume": 49648077, "avg_volume": 42676363, "market_cap": 3796033348019.9995, "sector": "ELECTRONIC COMPUTERS", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YXBwbGUuY29t/images/2025-04-04_icon.png", "homepage": "https://www.apple.com", "eps": 6.38, "eps_growth": -0.9, "debt_equity": 4.04, "dividend_yield": 0.4, "annual_dividend": 1.03, "graham_value": 54.21, "upside": -79.0, "moat": 20, "growth": 6, "balance": 4, "valuation": 4, "sentiment": 11, "short_score": 8.8, "mid_score": 9.4, "long_score": 9.8, "state": "COLD"}];
+        const stockData = [{"ticker": "GOOGL", "name": "Alphabet Inc. Class A Common Stock", "price": 334.55, "change": -0.81, "change_pct": -0.24, "volume": 21635652, "avg_volume": 39422714, "market_cap": 4037014850000.0, "sector": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YWJjLnh5eg/images/2025-04-04_icon.png", "homepage": "https://www.abc.xyz", "eps": 24.05, "eps_growth": 48.1, "debt_equity": 0.39, "dividend_yield": 0.25, "annual_dividend": 0.83, "total_debt": 149602000000.0, "total_equity": 386867000000.0, "graham_value": 925.88, "upside": 176.8, "moat": 20, "growth": 18, "balance": 16, "valuation": 20, "sentiment": 14, "short_score": 17.5, "mid_score": 18.1, "long_score": 18.1, "state": "FROZEN", "audit": {"moat": {"input": "Market Cap: $4037.0B", "bracket": "$2T+", "formula": "Market cap size brackets", "score": 20}, "growth": {"input": "EPS Growth: 48.1%", "bracket": "35-50%", "formula": "EPS growth rate brackets", "score": 18}, "balance": {"input": "D/E Ratio: 0.39", "raw_debt": 149602000000.0, "raw_equity": 386867000000.0, "bracket": "0.3-0.5", "formula": "Debt/Equity ratio brackets", "score": 16}, "valuation": {"input": "EPS: $24.05, Price: $334.55", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 48.1%))", "graham_value": 925.88, "upside_pct": 176.8, "bracket": "\u2265100% upside", "score": 20}, "sentiment": {"input": "Div Yield: 0.25%, Sector: SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC., Growth: 48.1%", "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14", "score": 14}, "warnings": []}}, {"ticker": "INTC", "name": "Intel Corp", "price": 43.93, "change": -0.04, "change_pct": -0.09, "volume": 121829763, "avg_volume": 75762123, "market_cap": 219438192207.88, "sector": "SEMICONDUCTORS & RELATED DEVICES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/aW50ZWwuY29t/images/2025-04-04_icon.png", "homepage": "https://www.intel.com", "eps": 3.58, "eps_growth": 358.2, "debt_equity": 0.75, "dividend_yield": 1.14, "annual_dividend": 0.5, "total_debt": 87784000000.0, "total_equity": 116730000000.0, "graham_value": 137.66, "upside": 213.4, "moat": 17, "growth": 20, "balance": 12, "valuation": 20, "sentiment": 15, "short_score": 17.5, "mid_score": 17.3, "long_score": 16.6, "state": "COLD", "audit": {"moat": {"input": "Market Cap: $219.4B", "bracket": "$200B+", "formula": "Market cap size brackets", "score": 17}, "growth": {"input": "EPS Growth: 358.2%", "bracket": "\u226550%", "formula": "EPS growth rate brackets", "score": 20}, "balance": {"input": "D/E Ratio: 0.75", "raw_debt": 87784000000.0, "raw_equity": 116730000000.0, "bracket": "0.7-1.0", "formula": "Debt/Equity ratio brackets", "score": 12}, "valuation": {"input": "EPS: $3.58, Price: $43.93", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 358.2%))", "graham_value": 137.66, "upside_pct": 213.4, "bracket": "\u2265100% upside", "score": 20}, "sentiment": {"input": "Div Yield: 1.14%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 358.2%", "breakdown": "Base(8) + Div(+2) + Tech(+2) + Growth(+3) = 15", "score": 15}, "warnings": []}}, {"ticker": "AMZN", "name": "Amazon.Com Inc", "price": 244.68, "change": 5.0, "change_pct": 2.08, "volume": 38220828, "avg_volume": 39263808, "market_cap": 2615682053571.48, "sector": "RETAIL-CATALOG & MAIL-ORDER HOUSES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YW1hem9uLmNvbQ/images/2025-04-04_icon.jpeg", "homepage": "https://www.amazon.com", "eps": 7.93, "eps_growth": 57.1, "debt_equity": 0.97, "dividend_yield": 0, "annual_dividend": 0, "total_debt": 358290000000.0, "total_equity": 369631000000.0, "graham_value": 305.21, "upside": 24.7, "moat": 20, "growth": 20, "balance": 12, "valuation": 14, "sentiment": 11, "short_score": 15.8, "mid_score": 16.0, "long_score": 15.9, "state": "COLD", "audit": {"moat": {"input": "Market Cap: $2615.7B", "bracket": "$2T+", "formula": "Market cap size brackets", "score": 20}, "growth": {"input": "EPS Growth: 57.1%", "bracket": "\u226550%", "formula": "EPS growth rate brackets", "score": 20}, "balance": {"input": "D/E Ratio: 0.97", "raw_debt": 358290000000.0, "raw_equity": 369631000000.0, "bracket": "0.7-1.0", "formula": "Debt/Equity ratio brackets", "score": 12}, "valuation": {"input": "EPS: $7.93, Price: $244.68", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 57.1%))", "graham_value": 305.21, "upside_pct": 24.7, "bracket": "20-40% upside", "score": 14}, "sentiment": {"input": "Div Yield: 0.00%, Sector: RETAIL-CATALOG & MAIL-ORDER HOUSES, Growth: 57.1%", "breakdown": "Base(8) + Div(+0) + Tech(+0) + Growth(+3) = 11", "score": 11}, "warnings": []}}, {"ticker": "NVDA", "name": "Nvidia Corp", "price": 188.52, "change": 1.28, "change_pct": 0.68, "volume": 143702917, "avg_volume": 188534148, "market_cap": 4581978600000.0, "sector": "SEMICONDUCTORS & RELATED DEVICES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/bnZpZGlhLmNvbQ/images/2025-04-04_icon.png", "homepage": "https://www.nvidia.com", "eps": 5.25, "eps_growth": 114.4, "debt_equity": 0.36, "dividend_yield": 0.02, "annual_dividend": 0.04, "total_debt": 42251000000.0, "total_equity": 118897000000.0, "graham_value": 202.23, "upside": 7.3, "moat": 20, "growth": 20, "balance": 16, "valuation": 10, "sentiment": 14, "short_score": 16.1, "mid_score": 16.0, "long_score": 16.4, "state": "FROZEN", "audit": {"moat": {"input": "Market Cap: $4582.0B", "bracket": "$2T+", "formula": "Market cap size brackets", "score": 20}, "growth": {"input": "EPS Growth: 114.4%", "bracket": "\u226550%", "formula": "EPS growth rate brackets", "score": 20}, "balance": {"input": "D/E Ratio: 0.36", "raw_debt": 42251000000.0, "raw_equity": 118897000000.0, "bracket": "0.3-0.5", "formula": "Debt/Equity ratio brackets", "score": 16}, "valuation": {"input": "EPS: $5.25, Price: $188.52", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 114.4%))", "graham_value": 202.23, "upside_pct": 7.3, "bracket": "0-10% upside", "score": 10}, "sentiment": {"input": "Div Yield: 0.02%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 114.4%", "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14", "score": 14}, "warnings": []}}, {"ticker": "CRM", "name": "Salesforce, Inc.", "price": 228.53, "change": -3.41, "change_pct": -1.47, "volume": 9838264, "avg_volume": 8135600, "market_cap": 214132610000.0, "sector": "SERVICES-PREPACKAGED SOFTWARE", "logo_url": "https://api.polygon.io/v1/reference/company-branding/c2FsZXNmb3JjZS5jb20/images/2025-04-04_icon.jpeg", "homepage": "https://www.salesforce.com", "eps": 8.06, "eps_growth": 54.2, "debt_equity": 0.59, "dividend_yield": 0.73, "annual_dividend": 1.66, "total_debt": 36245000000.0, "total_equity": 61328000000.0, "graham_value": 310.14, "upside": 35.7, "moat": 17, "growth": 20, "balance": 14, "valuation": 14, "sentiment": 14, "short_score": 16.2, "mid_score": 15.9, "long_score": 15.8, "state": "COLD", "audit": {"moat": {"input": "Market Cap: $214.1B", "bracket": "$200B+", "formula": "Market cap size brackets", "score": 17}, "growth": {"input": "EPS Growth: 54.2%", "bracket": "\u226550%", "formula": "EPS growth rate brackets", "score": 20}, "balance": {"input": "D/E Ratio: 0.59", "raw_debt": 36245000000.0, "raw_equity": 61328000000.0, "bracket": "0.5-0.7", "formula": "Debt/Equity ratio brackets", "score": 14}, "valuation": {"input": "EPS: $8.06, Price: $228.53", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 54.2%))", "graham_value": 310.14, "upside_pct": 35.7, "bracket": "20-40% upside", "score": 14}, "sentiment": {"input": "Div Yield: 0.73%, Sector: SERVICES-PREPACKAGED SOFTWARE, Growth: 54.2%", "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14", "score": 14}, "warnings": []}}, {"ticker": "MSFT", "name": "Microsoft Corp", "price": 480.58, "change": 6.88, "change_pct": 1.45, "volume": 29209069, "avg_volume": 23825084, "market_cap": 3571852053439.9, "sector": "SERVICES-PREPACKAGED SOFTWARE", "logo_url": "https://api.polygon.io/v1/reference/company-branding/bWljcm9zb2Z0LmNvbQ/images/2025-04-04_icon.jpeg", "homepage": "https://www.microsoft.com", "eps": 14.93, "eps_growth": 26.9, "debt_equity": 0.75, "dividend_yield": 0.72, "annual_dividend": 3.48, "total_debt": 273275000000.0, "total_equity": 363076000000.0, "graham_value": 574.92, "upside": 19.6, "moat": 20, "growth": 16, "balance": 12, "valuation": 12, "sentiment": 14, "short_score": 14.9, "mid_score": 15.1, "long_score": 15.2, "state": "COLD", "audit": {"moat": {"input": "Market Cap: $3571.9B", "bracket": "$2T+", "formula": "Market cap size brackets", "score": 20}, "growth": {"input": "EPS Growth: 26.9%", "bracket": "25-35%", "formula": "EPS growth rate brackets", "score": 16}, "balance": {"input": "D/E Ratio: 0.75", "raw_debt": 273275000000.0, "raw_equity": 363076000000.0, "bracket": "0.7-1.0", "formula": "Debt/Equity ratio brackets", "score": 12}, "valuation": {"input": "EPS: $14.93, Price: $480.58", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 26.9%))", "graham_value": 574.92, "upside_pct": 19.6, "bracket": "10-20% upside", "score": 12}, "sentiment": {"input": "Div Yield: 0.72%, Sector: SERVICES-PREPACKAGED SOFTWARE, Growth: 26.9%", "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14", "score": 14}, "warnings": []}}, {"ticker": "AMD", "name": "Advanced Micro Devices", "price": 252.03, "change": -0.13, "change_pct": -0.05, "volume": 25693298, "avg_volume": 33662481, "market_cap": 410315309326.2, "sector": "SEMICONDUCTORS & RELATED DEVICES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YW1kLmNvbQ/images/2025-04-04_icon.jpeg", "homepage": "https://www.amd.com", "eps": 3.05, "eps_growth": 369.1, "debt_equity": 0.26, "dividend_yield": 0, "annual_dividend": 0, "total_debt": 16101000000.0, "total_equity": 60790000000.0, "graham_value": 117.58, "upside": -53.3, "moat": 17, "growth": 20, "balance": 18, "valuation": 4, "sentiment": 13, "short_score": 14.4, "mid_score": 13.9, "long_score": 14.7, "state": "FROZEN", "audit": {"moat": {"input": "Market Cap: $410.3B", "bracket": "$200B+", "formula": "Market cap size brackets", "score": 17}, "growth": {"input": "EPS Growth: 369.1%", "bracket": "\u226550%", "formula": "EPS growth rate brackets", "score": 20}, "balance": {"input": "D/E Ratio: 0.26", "raw_debt": 16101000000.0, "raw_equity": 60790000000.0, "bracket": "0.1-0.3", "formula": "Debt/Equity ratio brackets", "score": 18}, "valuation": {"input": "EPS: $3.05, Price: $252.03", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 369.1%))", "graham_value": 117.58, "upside_pct": -53.3, "bracket": "<-40% upside", "score": 4}, "sentiment": {"input": "Div Yield: 0.00%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 369.1%", "breakdown": "Base(8) + Div(+0) + Tech(+2) + Growth(+3) = 13", "score": 13}, "warnings": []}}, {"ticker": "TSLA", "name": "Tesla, Inc. Common Stock", "price": 430.9, "change": -6.51, "change_pct": -1.49, "volume": 37732219, "avg_volume": 75626708, "market_cap": 1433095479060.2998, "sector": "MOTOR VEHICLES & PASSENGER CAR BODIES", "logo_url": "https://api.polygon.io/v1/reference/company-branding/dGVzbGEuY29t/images/2025-04-04_icon.png", "homepage": "https://www.tesla.com", "eps": 1.67, "eps_growth": -7.0, "debt_equity": 0.66, "dividend_yield": 0, "annual_dividend": 0, "total_debt": 53019000000.0, "total_equity": 80657000000.0, "graham_value": 14.2, "upside": -96.7, "moat": 19, "growth": 6, "balance": 14, "valuation": 4, "sentiment": 8, "short_score": 8.8, "mid_score": 10.2, "long_score": 11.7, "state": "FROZEN", "audit": {"moat": {"input": "Market Cap: $1433.1B", "bracket": "$1T+", "formula": "Market cap size brackets", "score": 19}, "growth": {"input": "EPS Growth: -7.0%", "bracket": "-10-0%", "formula": "EPS growth rate brackets", "score": 6}, "balance": {"input": "D/E Ratio: 0.66", "raw_debt": 53019000000.0, "raw_equity": 80657000000.0, "bracket": "0.5-0.7", "formula": "Debt/Equity ratio brackets", "score": 14}, "valuation": {"input": "EPS: $1.67, Price: $430.90", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -7.0%))", "graham_value": 14.2, "upside_pct": -96.7, "bracket": "<-40% upside", "score": 4}, "sentiment": {"input": "Div Yield: 0.00%, Sector: MOTOR VEHICLES & PASSENGER CAR BODIES, Growth: -7.0%", "breakdown": "Base(8) + Div(+0) + Tech(+0) + Growth(+0) = 8", "score": 8}, "warnings": []}}, {"ticker": "META", "name": "Meta Platforms, Inc. Class A Common Stock", "price": 672.97, "change": -1.62, "change_pct": -0.24, "volume": 13294016, "avg_volume": 16747279, "market_cap": 1696239456953.09, "sector": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YWJvdXQubWV0YS5jb20/images/2025-04-04_icon.png", "homepage": "https://about.meta.com", "eps": 4.98, "eps_growth": -79.9, "debt_equity": 0.57, "dividend_yield": 0.31, "annual_dividend": 2.1, "total_debt": 109778000000.0, "total_equity": 194066000000.0, "graham_value": 42.29, "upside": -93.7, "moat": 19, "growth": 2, "balance": 14, "valuation": 4, "sentiment": 11, "short_score": 8.4, "mid_score": 9.9, "long_score": 11.4, "state": "FROZEN", "audit": {"moat": {"input": "Market Cap: $1696.2B", "bracket": "$1T+", "formula": "Market cap size brackets", "score": 19}, "growth": {"input": "EPS Growth: -79.9%", "bracket": "<-25%", "formula": "EPS growth rate brackets", "score": 2}, "balance": {"input": "D/E Ratio: 0.57", "raw_debt": 109778000000.0, "raw_equity": 194066000000.0, "bracket": "0.5-0.7", "formula": "Debt/Equity ratio brackets", "score": 14}, "valuation": {"input": "EPS: $4.98, Price: $672.97", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -79.9%))", "graham_value": 42.29, "upside_pct": -93.7, "bracket": "<-40% upside", "score": 4}, "sentiment": {"input": "Div Yield: 0.31%, Sector: SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC., Growth: -79.9%", "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+0) = 11", "score": 11}, "warnings": []}}, {"ticker": "AAPL", "name": "Apple Inc.", "price": 258.27, "change": -0.9, "change_pct": -0.35, "volume": 49648077, "avg_volume": 42676363, "market_cap": 3796033348019.9995, "sector": "ELECTRONIC COMPUTERS", "logo_url": "https://api.polygon.io/v1/reference/company-branding/YXBwbGUuY29t/images/2025-04-04_icon.png", "homepage": "https://www.apple.com", "eps": 6.38, "eps_growth": -0.9, "debt_equity": 4.04, "dividend_yield": 0.4, "annual_dividend": 1.03, "total_debt": 265665000000.0, "total_equity": 65830000000.0, "graham_value": 54.21, "upside": -79.0, "moat": 20, "growth": 6, "balance": 4, "valuation": 4, "sentiment": 11, "short_score": 8.8, "mid_score": 9.4, "long_score": 9.8, "state": "COLD", "audit": {"moat": {"input": "Market Cap: $3796.0B", "bracket": "$2T+", "formula": "Market cap size brackets", "score": 20}, "growth": {"input": "EPS Growth: -0.9%", "bracket": "-10-0%", "formula": "EPS growth rate brackets", "score": 6}, "balance": {"input": "D/E Ratio: 4.04", "raw_debt": 265665000000.0, "raw_equity": 65830000000.0, "bracket": "\u22653.0", "formula": "Debt/Equity ratio brackets", "score": 4}, "valuation": {"input": "EPS: $6.38, Price: $258.27", "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -0.9%))", "graham_value": 54.21, "upside_pct": -79.0, "bracket": "<-40% upside", "score": 4}, "sentiment": {"input": "Div Yield: 0.40%, Sector: ELECTRONIC COMPUTERS, Growth: -0.9%", "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+0) = 11", "score": 11}, "warnings": []}}];
 
         function toggleTheme() {
             const body = document.body;
@@ -1177,6 +1775,15 @@
         function toggleDetails(ticker) {
             const row = document.getElementById('details-' + ticker);
             row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            // Hide audit when showing details
+            document.getElementById('audit-' + ticker).style.display = 'none';
+        }
+
+        function toggleAudit(ticker) {
+            const row = document.getElementById('audit-' + ticker);
+            row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            // Hide details when showing audit
+            document.getElementById('details-' + ticker).style.display = 'none';
         }
 
         function filterTable() {
@@ -1192,6 +1799,7 @@
 
                 row.style.display = matchesSearch && matchesState ? '' : 'none';
                 document.getElementById('details-' + ticker).style.display = 'none';
+                document.getElementById('audit-' + ticker).style.display = 'none';
             });
         }
 
@@ -1215,8 +1823,10 @@
             rows.forEach(row => {
                 const ticker = row.getAttribute('data-ticker');
                 const detailsRow = document.getElementById('details-' + ticker);
+                const auditRow = document.getElementById('audit-' + ticker);
                 tbody.appendChild(row);
                 tbody.appendChild(detailsRow);
+                tbody.appendChild(auditRow);
             });
         }
     </script>

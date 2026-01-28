@@ -1,5 +1,5 @@
 {
-  "updated": "2026-01-28 15:37 UTC",
+  "updated": "2026-01-28 15:50 UTC",
   "stocks": [
     {
       "ticker": "GOOGL",
@@ -18,6 +18,8 @@
       "debt_equity": 0.39,
       "dividend_yield": 0.25,
       "annual_dividend": 0.83,
+      "total_debt": 149602000000.0,
+      "total_equity": 386867000000.0,
       "graham_value": 925.88,
       "upside": 176.8,
       "moat": 20,
@@ -28,7 +30,43 @@
       "short_score": 17.5,
       "mid_score": 18.1,
       "long_score": 18.1,
-      "state": "FROZEN"
+      "state": "FROZEN",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $4037.0B",
+          "bracket": "$2T+",
+          "formula": "Market cap size brackets",
+          "score": 20
+        },
+        "growth": {
+          "input": "EPS Growth: 48.1%",
+          "bracket": "35-50%",
+          "formula": "EPS growth rate brackets",
+          "score": 18
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.39",
+          "raw_debt": 149602000000.0,
+          "raw_equity": 386867000000.0,
+          "bracket": "0.3-0.5",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 16
+        },
+        "valuation": {
+          "input": "EPS: $24.05, Price: $334.55",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 48.1%))",
+          "graham_value": 925.88,
+          "upside_pct": 176.8,
+          "bracket": "\u2265100% upside",
+          "score": 20
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.25%, Sector: SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC., Growth: 48.1%",
+          "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14",
+          "score": 14
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "INTC",
@@ -47,6 +85,8 @@
       "debt_equity": 0.75,
       "dividend_yield": 1.14,
       "annual_dividend": 0.5,
+      "total_debt": 87784000000.0,
+      "total_equity": 116730000000.0,
       "graham_value": 137.66,
       "upside": 213.4,
       "moat": 17,
@@ -57,7 +97,43 @@
       "short_score": 17.5,
       "mid_score": 17.3,
       "long_score": 16.6,
-      "state": "COLD"
+      "state": "COLD",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $219.4B",
+          "bracket": "$200B+",
+          "formula": "Market cap size brackets",
+          "score": 17
+        },
+        "growth": {
+          "input": "EPS Growth: 358.2%",
+          "bracket": "\u226550%",
+          "formula": "EPS growth rate brackets",
+          "score": 20
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.75",
+          "raw_debt": 87784000000.0,
+          "raw_equity": 116730000000.0,
+          "bracket": "0.7-1.0",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 12
+        },
+        "valuation": {
+          "input": "EPS: $3.58, Price: $43.93",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 358.2%))",
+          "graham_value": 137.66,
+          "upside_pct": 213.4,
+          "bracket": "\u2265100% upside",
+          "score": 20
+        },
+        "sentiment": {
+          "input": "Div Yield: 1.14%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 358.2%",
+          "breakdown": "Base(8) + Div(+2) + Tech(+2) + Growth(+3) = 15",
+          "score": 15
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "AMZN",
@@ -76,6 +152,8 @@
       "debt_equity": 0.97,
       "dividend_yield": 0,
       "annual_dividend": 0,
+      "total_debt": 358290000000.0,
+      "total_equity": 369631000000.0,
       "graham_value": 305.21,
       "upside": 24.7,
       "moat": 20,
@@ -86,7 +164,43 @@
       "short_score": 15.8,
       "mid_score": 16.0,
       "long_score": 15.9,
-      "state": "COLD"
+      "state": "COLD",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $2615.7B",
+          "bracket": "$2T+",
+          "formula": "Market cap size brackets",
+          "score": 20
+        },
+        "growth": {
+          "input": "EPS Growth: 57.1%",
+          "bracket": "\u226550%",
+          "formula": "EPS growth rate brackets",
+          "score": 20
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.97",
+          "raw_debt": 358290000000.0,
+          "raw_equity": 369631000000.0,
+          "bracket": "0.7-1.0",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 12
+        },
+        "valuation": {
+          "input": "EPS: $7.93, Price: $244.68",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 57.1%))",
+          "graham_value": 305.21,
+          "upside_pct": 24.7,
+          "bracket": "20-40% upside",
+          "score": 14
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.00%, Sector: RETAIL-CATALOG & MAIL-ORDER HOUSES, Growth: 57.1%",
+          "breakdown": "Base(8) + Div(+0) + Tech(+0) + Growth(+3) = 11",
+          "score": 11
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "NVDA",
@@ -105,6 +219,8 @@
       "debt_equity": 0.36,
       "dividend_yield": 0.02,
       "annual_dividend": 0.04,
+      "total_debt": 42251000000.0,
+      "total_equity": 118897000000.0,
       "graham_value": 202.23,
       "upside": 7.3,
       "moat": 20,
@@ -115,7 +231,43 @@
       "short_score": 16.1,
       "mid_score": 16.0,
       "long_score": 16.4,
-      "state": "FROZEN"
+      "state": "FROZEN",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $4582.0B",
+          "bracket": "$2T+",
+          "formula": "Market cap size brackets",
+          "score": 20
+        },
+        "growth": {
+          "input": "EPS Growth: 114.4%",
+          "bracket": "\u226550%",
+          "formula": "EPS growth rate brackets",
+          "score": 20
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.36",
+          "raw_debt": 42251000000.0,
+          "raw_equity": 118897000000.0,
+          "bracket": "0.3-0.5",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 16
+        },
+        "valuation": {
+          "input": "EPS: $5.25, Price: $188.52",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 114.4%))",
+          "graham_value": 202.23,
+          "upside_pct": 7.3,
+          "bracket": "0-10% upside",
+          "score": 10
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.02%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 114.4%",
+          "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14",
+          "score": 14
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "CRM",
@@ -134,6 +286,8 @@
       "debt_equity": 0.59,
       "dividend_yield": 0.73,
       "annual_dividend": 1.66,
+      "total_debt": 36245000000.0,
+      "total_equity": 61328000000.0,
       "graham_value": 310.14,
       "upside": 35.7,
       "moat": 17,
@@ -144,7 +298,43 @@
       "short_score": 16.2,
       "mid_score": 15.9,
       "long_score": 15.8,
-      "state": "COLD"
+      "state": "COLD",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $214.1B",
+          "bracket": "$200B+",
+          "formula": "Market cap size brackets",
+          "score": 17
+        },
+        "growth": {
+          "input": "EPS Growth: 54.2%",
+          "bracket": "\u226550%",
+          "formula": "EPS growth rate brackets",
+          "score": 20
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.59",
+          "raw_debt": 36245000000.0,
+          "raw_equity": 61328000000.0,
+          "bracket": "0.5-0.7",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 14
+        },
+        "valuation": {
+          "input": "EPS: $8.06, Price: $228.53",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 54.2%))",
+          "graham_value": 310.14,
+          "upside_pct": 35.7,
+          "bracket": "20-40% upside",
+          "score": 14
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.73%, Sector: SERVICES-PREPACKAGED SOFTWARE, Growth: 54.2%",
+          "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14",
+          "score": 14
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "MSFT",
@@ -163,6 +353,8 @@
       "debt_equity": 0.75,
       "dividend_yield": 0.72,
       "annual_dividend": 3.48,
+      "total_debt": 273275000000.0,
+      "total_equity": 363076000000.0,
       "graham_value": 574.92,
       "upside": 19.6,
       "moat": 20,
@@ -173,7 +365,43 @@
       "short_score": 14.9,
       "mid_score": 15.1,
       "long_score": 15.2,
-      "state": "COLD"
+      "state": "COLD",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $3571.9B",
+          "bracket": "$2T+",
+          "formula": "Market cap size brackets",
+          "score": 20
+        },
+        "growth": {
+          "input": "EPS Growth: 26.9%",
+          "bracket": "25-35%",
+          "formula": "EPS growth rate brackets",
+          "score": 16
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.75",
+          "raw_debt": 273275000000.0,
+          "raw_equity": 363076000000.0,
+          "bracket": "0.7-1.0",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 12
+        },
+        "valuation": {
+          "input": "EPS: $14.93, Price: $480.58",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 26.9%))",
+          "graham_value": 574.92,
+          "upside_pct": 19.6,
+          "bracket": "10-20% upside",
+          "score": 12
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.72%, Sector: SERVICES-PREPACKAGED SOFTWARE, Growth: 26.9%",
+          "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+3) = 14",
+          "score": 14
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "AMD",
@@ -192,6 +420,8 @@
       "debt_equity": 0.26,
       "dividend_yield": 0,
       "annual_dividend": 0,
+      "total_debt": 16101000000.0,
+      "total_equity": 60790000000.0,
       "graham_value": 117.58,
       "upside": -53.3,
       "moat": 17,
@@ -202,7 +432,43 @@
       "short_score": 14.4,
       "mid_score": 13.9,
       "long_score": 14.7,
-      "state": "FROZEN"
+      "state": "FROZEN",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $410.3B",
+          "bracket": "$200B+",
+          "formula": "Market cap size brackets",
+          "score": 17
+        },
+        "growth": {
+          "input": "EPS Growth: 369.1%",
+          "bracket": "\u226550%",
+          "formula": "EPS growth rate brackets",
+          "score": 20
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.26",
+          "raw_debt": 16101000000.0,
+          "raw_equity": 60790000000.0,
+          "bracket": "0.1-0.3",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 18
+        },
+        "valuation": {
+          "input": "EPS: $3.05, Price: $252.03",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 369.1%))",
+          "graham_value": 117.58,
+          "upside_pct": -53.3,
+          "bracket": "<-40% upside",
+          "score": 4
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.00%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 369.1%",
+          "breakdown": "Base(8) + Div(+0) + Tech(+2) + Growth(+3) = 13",
+          "score": 13
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "TSLA",
@@ -221,6 +487,8 @@
       "debt_equity": 0.66,
       "dividend_yield": 0,
       "annual_dividend": 0,
+      "total_debt": 53019000000.0,
+      "total_equity": 80657000000.0,
       "graham_value": 14.2,
       "upside": -96.7,
       "moat": 19,
@@ -231,7 +499,43 @@
       "short_score": 8.8,
       "mid_score": 10.2,
       "long_score": 11.7,
-      "state": "FROZEN"
+      "state": "FROZEN",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $1433.1B",
+          "bracket": "$1T+",
+          "formula": "Market cap size brackets",
+          "score": 19
+        },
+        "growth": {
+          "input": "EPS Growth: -7.0%",
+          "bracket": "-10-0%",
+          "formula": "EPS growth rate brackets",
+          "score": 6
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.66",
+          "raw_debt": 53019000000.0,
+          "raw_equity": 80657000000.0,
+          "bracket": "0.5-0.7",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 14
+        },
+        "valuation": {
+          "input": "EPS: $1.67, Price: $430.90",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -7.0%))",
+          "graham_value": 14.2,
+          "upside_pct": -96.7,
+          "bracket": "<-40% upside",
+          "score": 4
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.00%, Sector: MOTOR VEHICLES & PASSENGER CAR BODIES, Growth: -7.0%",
+          "breakdown": "Base(8) + Div(+0) + Tech(+0) + Growth(+0) = 8",
+          "score": 8
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "META",
@@ -250,6 +554,8 @@
       "debt_equity": 0.57,
       "dividend_yield": 0.31,
       "annual_dividend": 2.1,
+      "total_debt": 109778000000.0,
+      "total_equity": 194066000000.0,
       "graham_value": 42.29,
       "upside": -93.7,
       "moat": 19,
@@ -260,7 +566,43 @@
       "short_score": 8.4,
       "mid_score": 9.9,
       "long_score": 11.4,
-      "state": "FROZEN"
+      "state": "FROZEN",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $1696.2B",
+          "bracket": "$1T+",
+          "formula": "Market cap size brackets",
+          "score": 19
+        },
+        "growth": {
+          "input": "EPS Growth: -79.9%",
+          "bracket": "<-25%",
+          "formula": "EPS growth rate brackets",
+          "score": 2
+        },
+        "balance": {
+          "input": "D/E Ratio: 0.57",
+          "raw_debt": 109778000000.0,
+          "raw_equity": 194066000000.0,
+          "bracket": "0.5-0.7",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 14
+        },
+        "valuation": {
+          "input": "EPS: $4.98, Price: $672.97",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -79.9%))",
+          "graham_value": 42.29,
+          "upside_pct": -93.7,
+          "bracket": "<-40% upside",
+          "score": 4
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.31%, Sector: SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC., Growth: -79.9%",
+          "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+0) = 11",
+          "score": 11
+        },
+        "warnings": []
+      }
     },
     {
       "ticker": "AAPL",
@@ -279,6 +621,8 @@
       "debt_equity": 4.04,
       "dividend_yield": 0.4,
       "annual_dividend": 1.03,
+      "total_debt": 265665000000.0,
+      "total_equity": 65830000000.0,
       "graham_value": 54.21,
       "upside": -79.0,
       "moat": 20,
@@ -289,7 +633,43 @@
       "short_score": 8.8,
       "mid_score": 9.4,
       "long_score": 9.8,
-      "state": "COLD"
+      "state": "COLD",
+      "audit": {
+        "moat": {
+          "input": "Market Cap: $3796.0B",
+          "bracket": "$2T+",
+          "formula": "Market cap size brackets",
+          "score": 20
+        },
+        "growth": {
+          "input": "EPS Growth: -0.9%",
+          "bracket": "-10-0%",
+          "formula": "EPS growth rate brackets",
+          "score": 6
+        },
+        "balance": {
+          "input": "D/E Ratio: 4.04",
+          "raw_debt": 265665000000.0,
+          "raw_equity": 65830000000.0,
+          "bracket": "\u22653.0",
+          "formula": "Debt/Equity ratio brackets",
+          "score": 4
+        },
+        "valuation": {
+          "input": "EPS: $6.38, Price: $258.27",
+          "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -0.9%))",
+          "graham_value": 54.21,
+          "upside_pct": -79.0,
+          "bracket": "<-40% upside",
+          "score": 4
+        },
+        "sentiment": {
+          "input": "Div Yield: 0.40%, Sector: ELECTRONIC COMPUTERS, Growth: -0.9%",
+          "breakdown": "Base(8) + Div(+1) + Tech(+2) + Growth(+0) = 11",
+          "score": 11
+        },
+        "warnings": []
+      }
     }
   ]
 }
