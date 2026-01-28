@@ -1055,10 +1055,10 @@ def main():
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     # Save data
-    os.makedirs("output", exist_ok=True)
+    os.makedirs("docs", exist_ok=True)
 
     # Save JSON
-    with open("output/data.json", "w") as f:
+    with open("docs/data.json", "w") as f:
         json.dump({
             "updated": timestamp,
             "stocks": stocks
@@ -1067,7 +1067,7 @@ def main():
 
     # Save HTML
     html = generate_html(stocks, timestamp)
-    with open("output/index.html", "w") as f:
+    with open("docs/index.html", "w") as f:
         f.write(html)
     print(f"Saved index.html")
 

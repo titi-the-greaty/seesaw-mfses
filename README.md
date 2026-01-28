@@ -26,7 +26,7 @@ All data fetched from [Polygon.io](https://polygon.io) API.
 
 1. Clone the repository
 2. Add `POLYGON_API_KEY` to GitHub Secrets
-3. Enable GitHub Pages from `output/` folder
+3. Enable GitHub Pages from `docs/` folder
 4. Data updates automatically every 30 minutes during market hours
 
 ## Local Development
