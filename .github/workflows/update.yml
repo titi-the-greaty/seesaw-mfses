@@ -1,0 +1,40 @@
+name: Update MFSES Data
+
+on:
+  schedule:
+    # Every 30 minutes during market hours (9:30 AM - 4:00 PM ET)
+    # UTC is ET + 5 hours, so 9:30 AM ET = 14:30 UTC, 4:00 PM ET = 21:00 UTC
+    - cron: '*/30 14-21 * * 1-5'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run MFSES Engine
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+        run: python mfses_engine.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add output/
+          git diff --staged --quiet || git commit -m "Update MFSES data $(date -u +%Y-%m-%d\ %H:%M)"
+          git push
