@@ -1,15 +1,15 @@
 {
-  "updated": "2026-01-28 22:01 UTC",
+  "updated": "2026-01-29 15:56 UTC",
   "stocks": [
     {
       "ticker": "GOOGL",
       "name": "Alphabet Inc. Class A Common Stock",
-      "price": 334.55,
-      "change": -0.81,
-      "change_pct": -0.24,
-      "volume": 21635652,
+      "price": 336.01,
+      "change": -0.05,
+      "change_pct": -0.01,
+      "volume": 27433928,
       "avg_volume": 39422714,
-      "market_cap": 4037014850000.0,
+      "market_cap": 4054632670000.0,
       "sector": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/YWJjLnh5eg/images/2025-04-04_icon.png",
       "homepage": "https://www.abc.xyz",
@@ -21,7 +21,7 @@
       "total_debt": 50052000000.0,
       "total_equity": 386867000000.0,
       "graham_value": 925.88,
-      "upside": 176.8,
+      "upside": 175.6,
       "moat": 20,
       "growth": 16,
       "balance": 18,
@@ -33,7 +33,7 @@
       "state": "FROZEN",
       "audit": {
         "moat": {
-          "input": "Market Cap: $4037.0B",
+          "input": "Market Cap: $4054.6B",
           "bracket": "$2T+",
           "formula": "Market cap size brackets",
           "score": 20
@@ -53,10 +53,10 @@
           "score": 18
         },
         "valuation": {
-          "input": "EPS: $24.05, Price: $334.55",
+          "input": "EPS: $24.05, Price: $336.01",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 33.0%))",
           "graham_value": 925.88,
-          "upside_pct": 176.8,
+          "upside_pct": 175.6,
           "bracket": "\u2265100% upside",
           "score": 20
         },
@@ -71,24 +71,24 @@
     {
       "ticker": "INTC",
       "name": "Intel Corp",
-      "price": 43.93,
-      "change": -0.04,
-      "change_pct": -0.09,
-      "volume": 121829763,
+      "price": 48.78,
+      "change": 2.18,
+      "change_pct": 4.68,
+      "volume": 202177373,
       "avg_volume": 75762123,
-      "market_cap": 219438192207.88,
+      "market_cap": 243664808010.48,
       "sector": "SEMICONDUCTORS & RELATED DEVICES",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/aW50ZWwuY29t/images/2025-04-04_icon.png",
       "homepage": "https://www.intel.com",
       "eps": 3.58,
       "eps_growth": 125.1,
       "debt_equity": 0.38,
-      "dividend_yield": 1.14,
+      "dividend_yield": 1.03,
       "annual_dividend": 0.5,
       "total_debt": 43892000000.0,
       "total_equity": 116730000000.0,
       "graham_value": 137.66,
-      "upside": 213.4,
+      "upside": 182.2,
       "moat": 17,
       "growth": 20,
       "balance": 16,
@@ -97,10 +97,10 @@
       "short_score": 17.9,
       "mid_score": 17.9,
       "long_score": 17.6,
-      "state": "COLD",
+      "state": "HOT",
       "audit": {
         "moat": {
-          "input": "Market Cap: $219.4B",
+          "input": "Market Cap: $243.7B",
           "bracket": "$200B+",
           "formula": "Market cap size brackets",
           "score": 17
@@ -120,15 +120,15 @@
           "score": 16
         },
         "valuation": {
-          "input": "EPS: $3.58, Price: $43.93",
+          "input": "EPS: $3.58, Price: $48.78",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 125.1%))",
           "graham_value": 137.66,
-          "upside_pct": 213.4,
+          "upside_pct": 182.2,
           "bracket": "\u2265100% upside",
           "score": 20
         },
         "sentiment": {
-          "input": "Div Yield: 1.14%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 125.1%",
+          "input": "Div Yield: 1.03%, Sector: SEMICONDUCTORS & RELATED DEVICES, Growth: 125.1%",
           "breakdown": "Base(8) + Div(+2) + Tech(+2) + Growth(+3) = 15",
           "score": 15
         },
@@ -138,12 +138,12 @@
     {
       "ticker": "AMZN",
       "name": "Amazon.Com Inc",
-      "price": 244.68,
-      "change": 5.0,
-      "change_pct": 2.08,
-      "volume": 38220828,
+      "price": 243.01,
+      "change": -3.36,
+      "change_pct": -1.36,
+      "volume": 40882158,
       "avg_volume": 39263808,
-      "market_cap": 2615682053571.48,
+      "market_cap": 2597829392833.11,
       "sector": "RETAIL-CATALOG & MAIL-ORDER HOUSES",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/YW1hem9uLmNvbQ/images/2025-04-04_icon.jpeg",
       "homepage": "https://www.amazon.com",
@@ -155,7 +155,7 @@
       "total_debt": 55097000000.0,
       "total_equity": 369631000000.0,
       "graham_value": 305.21,
-      "upside": 24.7,
+      "upside": 25.6,
       "moat": 20,
       "growth": 18,
       "balance": 18,
@@ -167,7 +167,7 @@
       "state": "COLD",
       "audit": {
         "moat": {
-          "input": "Market Cap: $2615.7B",
+          "input": "Market Cap: $2597.8B",
           "bracket": "$2T+",
           "formula": "Market cap size brackets",
           "score": 20
@@ -187,10 +187,10 @@
           "score": 18
         },
         "valuation": {
-          "input": "EPS: $7.93, Price: $244.68",
+          "input": "EPS: $7.93, Price: $243.01",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 38.2%))",
           "graham_value": 305.21,
-          "upside_pct": 24.7,
+          "upside_pct": 25.6,
           "bracket": "20-40% upside",
           "score": 14
         },
@@ -205,12 +205,12 @@
     {
       "ticker": "CRM",
       "name": "Salesforce, Inc.",
-      "price": 228.53,
-      "change": -3.41,
-      "change_pct": -1.47,
-      "volume": 9838264,
+      "price": 227.96,
+      "change": -1.43,
+      "change_pct": -0.62,
+      "volume": 8465828,
       "avg_volume": 8135600,
-      "market_cap": 214132610000.0,
+      "market_cap": 213598520000.0,
       "sector": "SERVICES-PREPACKAGED SOFTWARE",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/c2FsZXNmb3JjZS5jb20/images/2025-04-04_icon.jpeg",
       "homepage": "https://www.salesforce.com",
@@ -222,7 +222,7 @@
       "total_debt": 8436000000.0,
       "total_equity": 61328000000.0,
       "graham_value": 310.14,
-      "upside": 35.7,
+      "upside": 36.0,
       "moat": 17,
       "growth": 16,
       "balance": 18,
@@ -234,7 +234,7 @@
       "state": "COLD",
       "audit": {
         "moat": {
-          "input": "Market Cap: $214.1B",
+          "input": "Market Cap: $213.6B",
           "bracket": "$200B+",
           "formula": "Market cap size brackets",
           "score": 17
@@ -254,10 +254,10 @@
           "score": 18
         },
         "valuation": {
-          "input": "EPS: $8.06, Price: $228.53",
+          "input": "EPS: $8.06, Price: $227.96",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 32.1%))",
           "graham_value": 310.14,
-          "upside_pct": 35.7,
+          "upside_pct": 36.0,
           "bracket": "20-40% upside",
           "score": 14
         },
@@ -272,12 +272,12 @@
     {
       "ticker": "MSFT",
       "name": "Microsoft Corp",
-      "price": 480.58,
-      "change": 6.88,
-      "change_pct": 1.45,
-      "volume": 29209069,
+      "price": 481.63,
+      "change": -1.58,
+      "change_pct": -0.33,
+      "volume": 36875095,
       "avg_volume": 23825084,
-      "market_cap": 3571852053439.9,
+      "market_cap": 3579656049977.65,
       "sector": "SERVICES-PREPACKAGED SOFTWARE",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/bWljcm9zb2Z0LmNvbQ/images/2025-04-04_icon.jpeg",
       "homepage": "https://www.microsoft.com",
@@ -289,7 +289,7 @@
       "total_debt": 43208000000.0,
       "total_equity": 363076000000.0,
       "graham_value": 499.85,
-      "upside": 4.0,
+      "upside": 3.8,
       "moat": 20,
       "growth": 12,
       "balance": 18,
@@ -301,7 +301,7 @@
       "state": "COLD",
       "audit": {
         "moat": {
-          "input": "Market Cap: $3571.9B",
+          "input": "Market Cap: $3579.7B",
           "bracket": "$2T+",
           "formula": "Market cap size brackets",
           "score": 20
@@ -321,10 +321,10 @@
           "score": 18
         },
         "valuation": {
-          "input": "EPS: $14.93, Price: $480.58",
+          "input": "EPS: $14.93, Price: $481.63",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 12.5%))",
           "graham_value": 499.85,
-          "upside_pct": 4.0,
+          "upside_pct": 3.8,
           "bracket": "0-10% upside",
           "score": 10
         },
@@ -339,12 +339,12 @@
     {
       "ticker": "AMD",
       "name": "Advanced Micro Devices",
-      "price": 252.03,
-      "change": -0.13,
-      "change_pct": -0.05,
-      "volume": 25693298,
+      "price": 252.74,
+      "change": -1.38,
+      "change_pct": -0.55,
+      "volume": 27060972,
       "avg_volume": 33662481,
-      "market_cap": 410315309326.2,
+      "market_cap": 411471218819.60004,
       "sector": "SEMICONDUCTORS & RELATED DEVICES",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/YW1kLmNvbQ/images/2025-04-04_icon.jpeg",
       "homepage": "https://www.amd.com",
@@ -356,7 +356,7 @@
       "total_debt": 4401000000.0,
       "total_equity": 60790000000.0,
       "graham_value": 117.58,
-      "upside": -53.3,
+      "upside": -53.5,
       "moat": 17,
       "growth": 20,
       "balance": 20,
@@ -368,7 +368,7 @@
       "state": "FROZEN",
       "audit": {
         "moat": {
-          "input": "Market Cap: $410.3B",
+          "input": "Market Cap: $411.5B",
           "bracket": "$200B+",
           "formula": "Market cap size brackets",
           "score": 17
@@ -388,10 +388,10 @@
           "score": 20
         },
         "valuation": {
-          "input": "EPS: $3.05, Price: $252.03",
+          "input": "EPS: $3.05, Price: $252.74",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 61.2%))",
           "graham_value": 117.58,
-          "upside_pct": -53.3,
+          "upside_pct": -53.5,
           "bracket": "<-40% upside",
           "score": 4
         },
@@ -406,12 +406,12 @@
     {
       "ticker": "NVDA",
       "name": "Nvidia Corp",
-      "price": 188.52,
-      "change": 1.28,
-      "change_pct": 0.68,
-      "volume": 143702917,
+      "price": 191.52,
+      "change": 0.25,
+      "change_pct": 0.13,
+      "volume": 148548284,
       "avg_volume": 188534148,
-      "market_cap": 4581978600000.0,
+      "market_cap": 4654893600000.0,
       "sector": "SEMICONDUCTORS & RELATED DEVICES",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/bnZpZGlhLmNvbQ/images/2025-04-04_icon.png",
       "homepage": "https://www.nvidia.com",
@@ -423,7 +423,7 @@
       "total_debt": 8467000000.0,
       "total_equity": 118897000000.0,
       "graham_value": 44.65,
-      "upside": -76.3,
+      "upside": -76.7,
       "moat": 20,
       "growth": 8,
       "balance": 20,
@@ -435,7 +435,7 @@
       "state": "FROZEN",
       "audit": {
         "moat": {
-          "input": "Market Cap: $4582.0B",
+          "input": "Market Cap: $4654.9B",
           "bracket": "$2T+",
           "formula": "Market cap size brackets",
           "score": 20
@@ -455,10 +455,10 @@
           "score": 20
         },
         "valuation": {
-          "input": "EPS: $5.25, Price: $188.52",
+          "input": "EPS: $5.25, Price: $191.52",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 0.0%))",
           "graham_value": 44.65,
-          "upside_pct": -76.3,
+          "upside_pct": -76.7,
           "bracket": "<-40% upside",
           "score": 4
         },
@@ -473,12 +473,12 @@
     {
       "ticker": "AAPL",
       "name": "Apple Inc.",
-      "price": 258.27,
-      "change": -0.9,
-      "change_pct": -0.35,
-      "volume": 49648077,
+      "price": 256.44,
+      "change": -1.21,
+      "change_pct": -0.47,
+      "volume": 41414623,
       "avg_volume": 42676363,
-      "market_cap": 3796033348019.9995,
+      "market_cap": 3769136143440.0,
       "sector": "ELECTRONIC COMPUTERS",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/YXBwbGUuY29t/images/2025-04-04_icon.png",
       "homepage": "https://www.apple.com",
@@ -490,7 +490,7 @@
       "total_debt": 91800000000.0,
       "total_equity": 65830000000.0,
       "graham_value": 172.31,
-      "upside": -33.3,
+      "upside": -32.8,
       "moat": 20,
       "growth": 10,
       "balance": 10,
@@ -499,10 +499,10 @@
       "short_score": 11.2,
       "mid_score": 11.8,
       "long_score": 12.4,
-      "state": "COLD",
+      "state": "FROZEN",
       "audit": {
         "moat": {
-          "input": "Market Cap: $3796.0B",
+          "input": "Market Cap: $3769.1B",
           "bracket": "$2T+",
           "formula": "Market cap size brackets",
           "score": 20
@@ -522,10 +522,10 @@
           "score": 10
         },
         "valuation": {
-          "input": "EPS: $6.38, Price: $258.27",
+          "input": "EPS: $6.38, Price: $256.44",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, 9.3%))",
           "graham_value": 172.31,
-          "upside_pct": -33.3,
+          "upside_pct": -32.8,
           "bracket": "-40--20% upside",
           "score": 6
         },
@@ -540,12 +540,12 @@
     {
       "ticker": "META",
       "name": "Meta Platforms, Inc. Class A Common Stock",
-      "price": 672.97,
-      "change": -1.62,
-      "change_pct": -0.24,
-      "volume": 13294016,
+      "price": 668.73,
+      "change": -5.77,
+      "change_pct": -0.86,
+      "volume": 25709665,
       "avg_volume": 16747279,
-      "market_cap": 1696239456953.09,
+      "market_cap": 1685552419941.81,
       "sector": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/YWJvdXQubWV0YS5jb20/images/2025-04-04_icon.png",
       "homepage": "https://about.meta.com",
@@ -566,10 +566,10 @@
       "short_score": 8.8,
       "mid_score": 10.5,
       "long_score": 12.4,
-      "state": "FROZEN",
+      "state": "COLD",
       "audit": {
         "moat": {
-          "input": "Market Cap: $1696.2B",
+          "input": "Market Cap: $1685.6B",
           "bracket": "$1T+",
           "formula": "Market cap size brackets",
           "score": 19
@@ -589,7 +589,7 @@
           "score": 18
         },
         "valuation": {
-          "input": "EPS: $4.98, Price: $672.97",
+          "input": "EPS: $4.98, Price: $668.73",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -82.7%))",
           "graham_value": 42.29,
           "upside_pct": -93.7,
@@ -607,12 +607,12 @@
     {
       "ticker": "TSLA",
       "name": "Tesla, Inc. Common Stock",
-      "price": 430.9,
-      "change": -6.51,
-      "change_pct": -1.49,
-      "volume": 37732219,
+      "price": 431.46,
+      "change": -0.45,
+      "change_pct": -0.1,
+      "volume": 54890072,
       "avg_volume": 75626708,
-      "market_cap": 1433095479060.2998,
+      "market_cap": 1434957937793.8198,
       "sector": "MOTOR VEHICLES & PASSENGER CAR BODIES",
       "logo_url": "https://api.polygon.io/v1/reference/company-branding/dGVzbGEuY29t/images/2025-04-04_icon.png",
       "homepage": "https://www.tesla.com",
@@ -636,7 +636,7 @@
       "state": "FROZEN",
       "audit": {
         "moat": {
-          "input": "Market Cap: $1433.1B",
+          "input": "Market Cap: $1435.0B",
           "bracket": "$1T+",
           "formula": "Market cap size brackets",
           "score": 19
@@ -656,7 +656,7 @@
           "score": 20
         },
         "valuation": {
-          "input": "EPS: $1.67, Price: $430.90",
+          "input": "EPS: $1.67, Price: $431.46",
           "graham_formula": "EPS \u00d7 (8.5 + 2 \u00d7 min(15, -36.4%))",
           "graham_value": 14.2,
           "upside_pct": -96.7,
